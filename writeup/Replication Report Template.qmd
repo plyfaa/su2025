@@ -100,6 +100,8 @@ Stimuli selection: "scene stimuli with a broad range of scene-object congruencie
 
 "all selected stimuli underwent a rigorous screening process using a questionnaire. An additional 12 participants (seven females; M = 22.83 years, SD = 1.07 years; undergraduate and graduate students of Sun Yat-sen University) completed the questionnaire. They were asked to name the scene and the target objects and to rate the congruency between the two using a 7-point Likert scale. The naming results were then cross-checked by two independent observers. Only stimuli correctly identified by more than 10 participants were retained for inclusion in the stimulus set." 
 
+Familiarity ratings: 90 object names will be shown to each participant with no image. The question reads “How familiar is this object to you?” and participants click a number from 1 (not at all familiar) to 10 (very familiar). No time limit. The 10-point scale matches the original.
+
 ### Analysis Plan 
 
 Original: "We evaluated our hypotheses by comparing two models: one that included both linear and quadratic components derived from a second-order polynomial expansion of scene-object congruency (quadratic model) and another that included only a linear component (linear model)." (p. 1745).
