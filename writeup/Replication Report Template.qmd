@@ -53,7 +53,9 @@ In 1a and 1b the participants go through the same identification task. The main 
 
 Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
 
+For Experiment 1a they give only an "observed power" of 100% (p. 1743). I don't believe this means anything about the N a new study needs. 
 
+In experiment 1b they write: "Based on the results of Experiment 1a, a minimum of 46 participants would be required to achieve 80% power" (p. 1746). They do not give 90% or 95%, and they do not say how 46 was computed.
 
 ### Planned Sample
 
@@ -61,40 +63,59 @@ Planned sample size and/or termination rule, sampling frame, known demographics 
 
 Original: "69 participants (37 participants reported their gender as female, 32 as male; age: M = 23.01 years, SD = 2.55)."
 
-I'm aiming for around 100 to 120 people. 
+I'm aiming for ~100-120 participants through UCSD's SONA system. 
 
+Eligibility: 18 or older, fluent in English, normal or corrected-to-normal vision, and a laptop or desktop computer with a keyboard. No other selection criteria. 
 
+I also plan to collect age, gender, first language and years speaking English. Most SONA participants are undergraduates so this sample will most likely be younger than the original study and may also include individuals whose first language is not English. 
 
+"All participants provided signed informed consent, had normal or
+corrected-to-normal vision."
 
 ### Materials
 
 All materials - can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
 
+I plan to use the original stimulus set and have emailed the author (Dr. Xiaowei Ding) listed to contact on the paper (they have responded, but have not provided the set yet). 
+
+Scene stimuli: "90 scene images were included in the stimulus set, 49 of which were obtained from the SCEGRAM database (Öhlschläger & Võ, 2017), 11 from the Berlin Object in Scene database (Mohr et al., 2016), and an additional 30 from the Internet" (p. 1743). Each scene contains one target object.
+
+Alternatives: "In the two alternatives of each trial, there was always a target object appearing in the scene and a lure item. The lure items were obtained from the Internet. Lures always belonged to the same category as the target, but were different exemplars" (p. 1743).
+
+Catch trials. Six catch scenes, each followed by two scene names. The paper does not list them and I've requested them in the email. If they are not available I plan to use six SCEGRAM scenes that are not in the main set. 
+
+"We used the Chinese version of ConceptNet Numberbatch to generate semantic vectors.... We calculated the semantic similarity between the scene vector and the object vector (i.e., the cosine similarity of the vectors...)" (p. 1743).
+--> I will use the English Numberbatch version. The authors expected this to work: "We expect that our results can be extended as long as congruency is computed on the basis of the language commonly used by the participants" (p. 1757).
+
 ### Procedure	
 
 Can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
 
+1. Each trial begins with a fixation cross (800-1,000 ms, randomly selected from a uniform distribution). 
+2. Then, a scene display lasting 2,500 ms is presented on the screen. 
+3. After another fixation cross (500 ms), two alternatives are presented on the screen. Participants performed a 2AFC task in which they selected the alternative that had appeared in the scene. Participants pressed 'F' for left and 'J' for right on the keyboard to indicate which side they believed the target object appeared on. 
+4. In addition, six catch trials assessed participants' engagement. In these trials, a scene picture (e.g., bathroom) was presented, followed by a 2AFC question asking participants to identify the category of the scene they had just seen (e.g., kitchen or bathroom)" (p. 1745).
 
+Stimuli selection: "scene stimuli with a broad range of scene-object congruencies." 
 
+"all selected stimuli underwent a rigorous screening process using a questionnaire. An additional 12 participants (seven females; M = 22.83 years, SD = 1.07 years; undergraduate and graduate students of Sun Yat-sen University) completed the questionnaire. They were asked to name the scene and the target objects and to rate the congruency between the two using a 7-point Likert scale. The naming results were then cross-checked by two independent observers. Only stimuli correctly identified by more than 10 participants were retained for inclusion in the stimulus set." 
 
-### Analysis Plan
+### Analysis Plan 
 
-Report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible.  
-
-"We evaluated our hypotheses by comparing two models: one that included both linear and quadratic components derived from a second-order polynomial expansion of scene-object congruency (quadratic model) and another that included only a linear component (linear model)."
+Original: "We evaluated our hypotheses by comparing two models: one that included both linear and quadratic components derived from a second-order polynomial expansion of scene-object congruency (quadratic model) and another that included only a linear component (linear model)." (p. 1745).
 
 I plan to reuse the four image-based covariates and collect new familiarity ratings.
 
-"We also considered some confounding variables: saliency, size, center proximity, complexity, and familiarity,
-which were included in the further regression model analysis to control for their potential effects. For saliency, we calculated the saliency rank within 15 simulated fixations using the Saliency Toolbox (Walther & Koch, 2006)."
+"We also considered some confounding variables: saliency, size, center proximity, complexity, and familiarity, which were included in the further regression model analysis to control for their potential effects. For saliency, we calculated the saliency rank within 15 simulated fixations using the Saliency Toolbox (Walther & Koch, 2006)."
 
 **Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.
-
-
 
 ### Differences from Original Study
 
 Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.
+
+- More participants will be tested compared to the original study (account for data loss). 
+- English vs Chinese speaking participants. I expect there to be some slight differences here especially as I plan to recollect the ratings. 
 
 ### Methods Addendum (Post Data Collection)
 
@@ -105,6 +126,11 @@ You can comment this section out prior to final report with data collection.
 
 #### Differences from pre-data collection methods plan
   Any differences from what was described as the original plan, or “none”.
+
+
+
+
+
 
 
 ## Results
