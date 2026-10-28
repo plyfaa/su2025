@@ -209,7 +209,7 @@
 <script>
 
 const CONFIG = {
-  apps_script_url: "https://script.google.com/macros/s/AKfycbwVODvJB9Jz0HBGjQG8zvfvHfMQUcbc3hZWGzJvCkZk7_2r4-5tuQjCkHF8tU3Q4QWp/exec",
+  apps_script_url: "https://script.google.com/macros/s/AKfycbxG0N9iZrWYF1mrLVFOT9O3ypBMrZAyOWOy4AH82BmB-qxWRIYaGJ7P6H1MVg8-_RQQ/exec",
   sona_redirect_url: "https://your-institution.sona-systems.com/webstudy_credit.aspx?experiment_id=XXXX&credit_token=XXXX&survey_code=",
 };
 
@@ -320,9 +320,10 @@ function makeRatingTrial(wordObj, index, total) {
       trial_index_in_survey: index,
     },
     on_load: function() {
-      window._currentRating = null;
+      window._ratings = window._ratings || {};
+      window._ratings[index] = null;
       window.selectRating = function(idx, val) {
-        window._currentRating = val;
+        window._ratings[idx] = val;
         document.querySelectorAll(`#scale-btns-${idx} .scale-btn`).forEach(btn => {
           btn.classList.toggle('selected', parseInt(btn.dataset.val) === val);
         });
@@ -330,16 +331,17 @@ function makeRatingTrial(wordObj, index, total) {
         if (sb) sb.classList.add('ready');
       };
       window.submitRating = function(idx) {
-        if (window._currentRating === null) return;
+        const rating = window._ratings[idx];
+        if (rating === null || rating === undefined) return;
         jsPsych.finishTrial({
-          familiarity: window._currentRating,
+          familiarity: rating,
           word: wordObj.word,
           congruency: wordObj.congruency,
         });
       };
     },
     on_finish: function(data) {
-      data.familiarity = window._currentRating;
+      data.familiarity = window._ratings[index];
     }
   };
 }
@@ -378,6 +380,8 @@ async function saveData() {
       rt: r.rt
     }))
   };
+
+  console.log("Sending payload:", JSON.stringify(payload).slice(0, 300));
 
   try {
     await fetch(CONFIG.apps_script_url, {
