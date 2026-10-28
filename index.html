@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Word Familiarity Study</title>
+
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.4"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.2.1"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css">
+
+  <style>
+    :root {
+      --bg:        #FFFFFF;
+      --surface:   #FFFFFF;
+      --ink:       #1A1A1A;
+      --ink-soft:  #5A5A5A;
+      --accent:    #3D6B8E;
+      --accent-lt: #D6E4EF;
+      --border:    #DCDCDC;
+      --radius:    6px;
+      --font-ui:   system-ui, -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      font-family: var(--font-ui);
+      color: var(--ink);
+    }
+
+    .jspsych-content-wrapper { background: var(--bg); min-height: 100vh; }
+
+    .jspsych-content {
+      max-width: 620px;
+      padding: 24px 20px 16px;
+    }
+
+    .instr-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px 20px;
+      text-align: left;
+      font-size: 0.97em;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    .instr-wrap h2 {
+      font-size: 1.15em;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+
+    .instr-wrap p { margin-bottom: 10px; }
+    .instr-wrap p:last-child { margin-bottom: 0; }
+
+    .anchor-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.93em;
+    }
+    .anchor-table td {
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .anchor-table td:first-child {
+      font-weight: 600;
+      white-space: nowrap;
+      width: 36px;
+      text-align: center;
+      background: var(--accent-lt);
+    }
+
+    .jspsych-instructions-nav {
+      margin-top: 12px !important;
+      padding-bottom: 4px;
+      display: flex !important;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .jspsych-instructions-nav button,
+    .jspsych-btn {
+      background: var(--accent) !important;
+      color: #fff !important;
+      border: none !important;
+      border-radius: var(--radius) !important;
+      padding: 9px 22px !important;
+      font-family: var(--font-ui) !important;
+      font-size: 0.95em !important;
+      font-weight: 500 !important;
+      cursor: pointer !important;
+      box-shadow: none !important;
+    }
+
+    .jspsych-instructions-nav button:hover { filter: brightness(1.1); }
+
+    .rating-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 32px 24px;
+      text-align: center;
+    }
+
+    .trial-counter {
+      font-size: 0.75em;
+      color: var(--ink-soft);
+      margin-bottom: 22px;
+    }
+
+    .word-display {
+      font-size: 2.2em;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .word-prompt {
+      font-size: 0.9em;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .scale-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76em;
+      color: var(--ink-soft);
+      padding: 0 2px;
+    }
+
+    .scale-buttons {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+    }
+
+    .scale-btn {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 0.95em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.1s, background 0.1s, color 0.1s;
+      flex-shrink: 0;
+    }
+
+    .scale-btn:hover { border-color: var(--accent); background: var(--accent-lt); }
+    .scale-btn.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+    .submit-btn {
+      margin-top: 22px;
+      padding: 10px 32px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.95em;
+      font-weight: 500;
+      cursor: pointer;
+      opacity: 0.35;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+
+    .submit-btn.ready { opacity: 1; pointer-events: auto; }
+    .submit-btn.ready:hover { filter: brightness(1.1); }
+
+    #jspsych-progressbar-container { background: var(--border); }
+    #jspsych-progressbar-inner { background: var(--accent); }
+
+    .saving-msg {
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 1.05em;
+      padding: 60px 20px;
+    }
+    .saving-msg strong {
+      color: var(--ink);
+      display: block;
+      font-size: 1.3em;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<script>
+
+const CONFIG = {
+  apps_script_url: "https://script.google.com/macros/s/AKfycbxG0N9iZrWYF1mrLVFOT9O3ypBMrZAyOWOy4AH82BmB-qxWRIYaGJ7P6H1MVg8-_RQQ/exec",
+  sona_redirect_url: "https://your-institution.sona-systems.com/webstudy_credit.aspx?experiment_id=XXXX&credit_token=XXXX&survey_code=",
+};
+
+const WORDS = [
+  { word: "soap",           congruency: 0.89 },
+  { word: "towel",          congruency: 0.86 },
+  { word: "toilet brush",   congruency: 0.71 },
+  { word: "bathrobe",       congruency: 0.72 },
+  { word: "closestool",     congruency: 0.81 },
+  { word: "oven",           congruency: 0.61 },
+  { word: "liquid soap",    congruency: 0.63 },
+  { word: "bath ball",      congruency: 0.92 },
+  { word: "sofa",           congruency: 0.53 },
+  { word: "nightstand",     congruency: 0.53 },
+  { word: "fridge",         congruency: 0.53 },
+  { word: "faucet",         congruency: 0.49 },
+  { word: "rice cooker",    congruency: 0.46 },
+  { word: "tea table",      congruency: 0.59 },
+  { word: "microwave",      congruency: 0.55 },
+  { word: "hair dryer",     congruency: 0.51 },
+  { word: "toothpaste",     congruency: 0.48 },
+  { word: "chair",          congruency: 0.49 },
+  { word: "brush",          congruency: 0.56 },
+  { word: "washcloth",      congruency: 0.42 },
+  { word: "pot",            congruency: 0.55 },
+  { word: "dish soap",      congruency: 0.40 },
+  { word: "kettle",         congruency: 0.41 },
+  { word: "trash can",      congruency: 0.39 },
+  { word: "clothes hanger", congruency: 0.49 },
+  { word: "mirror",         congruency: 0.34 },
+  { word: "coffee maker",   congruency: 0.35 },
+  { word: "rolling pin",    congruency: 0.32 },
+  { word: "oven mitt",      congruency: 0.30 },
+  { word: "ketchup",        congruency: 0.27 },
+  { word: "vase",           congruency: 0.26 },
+  { word: "toaster",        congruency: 0.43 },
+  { word: "mailbox",        congruency: 0.38 },
+  { word: "lamp",           congruency: 0.18 },
+  { word: "watering can",   congruency: 0.14 },
+  { word: "alarm clock",    congruency: 0.23 },
+  { word: "tissue",         congruency: 0.12 },
+  { word: "computer mouse", congruency: 0.12 },
+  { word: "toilet paper",   congruency: 0.20 },
+  { word: "clock",          congruency: 0.10 },
+  { word: "phone",          congruency: 0.12 },
+  { word: "sponge",         congruency: 0.12 },
+  { word: "egg carton",     congruency: 0.19 },
+  { word: "book",           congruency: 0.08 },
+  { word: "watercolor",     congruency: 0.06 },
+  { word: "dvd",            congruency: 0.06 },
+  { word: "glasses",        congruency: -0.04 },
+  { word: "umbrella",       congruency: 0.06 },
+  { word: "sandal",         congruency: 0.10 },
+  { word: "jelly",          congruency: -0.03 },
+  { word: "toast",          congruency: 0.00 },
+  { word: "cd",             congruency: 0.00 },
+  { word: "hat",            congruency: 0.08 },
+];
+
+function getSONAcode() {
+  const p = new URLSearchParams(window.location.search);
+  return p.get("SONA_ID") || p.get("id") || p.get("survey_code") || "UNKNOWN";
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function makeRatingTrial(wordObj, index, total) {
+  return {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <div class="rating-card">
+        <div class="trial-counter">Word ${index + 1} of ${total}</div>
+        <div class="word-display">${wordObj.word}</div>
+        <div class="word-prompt">
+          How familiar is this word to you?<br>
+          <small style="font-size:0.85em; opacity:0.7;">1 = not at all familiar &nbsp;&nbsp; 10 = extremely familiar</small>
+        </div>
+        <div class="scale-container">
+          <div class="scale-labels">
+            <span>Not at all familiar</span>
+            <span>Extremely familiar</span>
+          </div>
+          <div class="scale-buttons" id="scale-btns-${index}">
+            ${[1,2,3,4,5,6,7,8,9,10].map(n =>
+              `<button class="scale-btn" data-val="${n}" onclick="selectRating(${index}, ${n})">${n}</button>`
+            ).join('')}
+          </div>
+        </div>
+        <button class="submit-btn" id="submit-btn-${index}" onclick="submitRating(${index})">
+          Continue
+        </button>
+      </div>
+    `,
+    choices: [],
+    trial_duration: null,
+    response_ends_trial: false,
+    data: {
+      phase: "familiarity_rating",
+      word: wordObj.word,
+      congruency: wordObj.congruency,
+      trial_index_in_survey: index,
+    },
+    on_load: function() {
+      window._currentRating = null;
+      window.selectRating = function(idx, val) {
+        window._currentRating = val;
+        document.querySelectorAll(`#scale-btns-${idx} .scale-btn`).forEach(btn => {
+          btn.classList.toggle('selected', parseInt(btn.dataset.val) === val);
+        });
+        const sb = document.getElementById(`submit-btn-${idx}`);
+        if (sb) sb.classList.add('ready');
+      };
+      window.submitRating = function(idx) {
+        if (window._currentRating === null) return;
+        jsPsych.finishTrial({
+          familiarity: window._currentRating,
+          word: wordObj.word,
+          congruency: wordObj.congruency,
+        });
+      };
+    },
+    on_finish: function(data) {
+      data.familiarity = window._currentRating;
+    }
+  };
+}
+
+const SONA_ID = getSONAcode();
+
+const jsPsych = initJsPsych({
+  show_progress_bar: true,
+  on_finish: async function() {
+    await saveData();
+    setTimeout(() => {
+      window.location.href = CONFIG.sona_redirect_url + SONA_ID;
+    }, 2500);
+  }
+});
+
+async function saveData() {
+  document.querySelector('.jspsych-content').innerHTML = `
+    <div class="saving-msg">
+      <strong>Saving your responses...</strong>
+      Please keep this window open for a moment.
+    </div>`;
+
+  const ratings = jsPsych.data.get()
+    .filter({ phase: "familiarity_rating" })
+    .values();
+
+  const payload = {
+    participant_id: SONA_ID,
+    timestamp: new Date().toISOString(),
+    user_agent: navigator.userAgent,
+    ratings: ratings.map(r => ({
+      word: r.word,
+      familiarity: r.familiarity,
+      congruency: r.congruency,
+      rt: r.rt
+    }))
+  };
+
+  try {
+    await fetch(CONFIG.apps_script_url, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    document.querySelector('.jspsych-content').innerHTML = `
+      <div class="saving-msg">
+        <strong>All done, thank you!</strong>
+        Your responses have been saved. Redirecting to claim your credit.
+      </div>`;
+  } catch (err) {
+    document.querySelector('.jspsych-content').innerHTML = `
+      <div class="saving-msg">
+        <strong>Responses recorded.</strong>
+        <p style="margin-top:12px; font-size:0.9em;">
+          If credit does not appear within 24 hours, please contact your researcher and quote this code:
+          <code>${SONA_ID}</code>
+        </p>
+      </div>`;
+  }
+}
+
+const shuffledWords = shuffle(WORDS);
+
+const fullscreen = {
+  type: jsPsychFullscreen,
+  fullscreen_mode: true,
+  message: `<p style="font-family:system-ui; padding:20px;">
+    This study runs best in fullscreen. Click the button below to continue.
+  </p>`
+};
+
+const instructions = {
+  type: jsPsychInstructions,
+  pages: [
+    `<div class="instr-wrap">
+      <h2>Word Familiarity Study</h2>
+      <p>This study is part of a research project on visual perception. It takes approximately <strong>8 minutes</strong>.</p>
+      <p>You will see a series of common English words presented one at a time. For each word, please rate how familiar it is to you on a scale from <strong>1</strong> (not at all familiar) to <strong>10</strong> (extremely familiar).</p>
+      <table class="anchor-table">
+        <tr><td>1</td><td>Not at all familiar</td></tr>
+        <tr><td>10</td><td>Extremely familiar</td></tr>
+      </table>
+      <p>Click a number to record your rating, then click <strong>Continue</strong> to move to the next word.</p>
+      <p>Please respond based on your own experience. There are no right or wrong answers. Do not use a dictionary.</p>
+      <p>Your responses are anonymous. Your SONA ID is used only to assign course credit.</p>
+      <p>By clicking <strong>Begin</strong> you confirm you are a native or fluent English speaker aged 18 or older and agree to participate.</p>
+    </div>`
+  ],
+  show_clickable_nav: true,
+  button_label_next: "Begin"
+};
+
+const ratingTrials = shuffledWords.map((w, i) =>
+  makeRatingTrial(w, i, shuffledWords.length)
+);
+
+const thankYou = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="saving-msg">
+      <strong>All responses recorded.</strong>
+      Saving your data now, please wait a moment.
+    </div>`,
+  choices: "NO_KEYS",
+  trial_duration: 1000,
+  data: { phase: "end_screen" }
+};
+
+const timeline = [
+  fullscreen,
+  instructions,
+  ...ratingTrials,
+  thankYou
+];
+
+jsPsych.run(timeline);
+</script>
+</body>
+</html>
