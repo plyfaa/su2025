@@ -352,9 +352,9 @@ const jsPsych = initJsPsych({
   show_progress_bar: true,
   on_finish: async function() {
     await saveData();
-    setTimeout(() => {
-      window.location.href = CONFIG.sona_redirect_url + SONA_ID;
-    }, 2500);
+    // setTimeout(() => {
+    //   window.location.href = CONFIG.sona_redirect_url + SONA_ID;
+    // }, 2500);
   }
 });
 
