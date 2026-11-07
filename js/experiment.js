@@ -1,4 +1,4 @@
-// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.5.
+// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.6.
 // Modes (URL parameters):
 //   (none)                    the real study
 //   ?simulate=data-only&sessions=N   N simulated sessions, no saving (developer check)
@@ -13,7 +13,21 @@ function getSonaId() {
   for (const k of CONFIG.sona_id_params) { const v = URLP.get(k); if (v) return v; }
   return "";
 }
-function isFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+function docFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+// v1.6 (D08): on a Mac, leaving full screen with the green window button can leave Chrome telling the page it is still
+// in full screen while the window is back to normal size (your test, 7 Nov 2026). The browser's display-mode setting
+// follows the window itself. So once this browser has reported display-mode "fullscreen" while in full screen, a page
+// that says "full screen" while display-mode does not counts as NOT in full screen. A browser that never reports
+// display-mode "fullscreen" is judged by the page alone, as in v1.5, so nobody is stopped by a browser that lacks it.
+const DM_FS = window.matchMedia ? window.matchMedia("(display-mode: fullscreen)") : null;
+let DM_SEEN = false;
+function isFullscreen() {
+  const doc = docFullscreen();
+  const dm = !!(DM_FS && DM_FS.matches);
+  if (doc && dm) DM_SEEN = true;
+  if (!doc) return false;
+  return !(DM_SEEN && !dm);
+}
 function exitFullscreen() {
   if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(() => {});
   else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen();
@@ -382,11 +396,20 @@ function quizScreen(jsPsych) {
 // full screen" and a button to go back, on any screen. Keys do nothing while it is up, so F or J cannot answer for objects
 // the person cannot see. Exits during the task are counted (fullscreen_exits). Before each trial and the practice, the
 // study also waits until the page is back in full screen (fullscreenWait).
+// v1.6: "full screen" means isFullscreen() above (page AND window), checked on every full-screen and display-mode change,
+// on every window resize, and every 250 ms as a backup in case a browser sends no event.
 let FS_OVERLAY_ON = false;
 function requestFullscreen() {
   const el = document.documentElement;
-  const p = el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
-  if (p && p.catch) p.catch(() => {});
+  const go = () => {
+    const p = el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
+    if (p && p.catch) p.catch(() => {});
+  };
+  // v1.6: if the page still says "full screen" but the window is not (green button), leave the page's full screen
+  // first, so the request puts the window back in full screen. If that second step is refused, the message stays up
+  // and the next click asks again from a clean state.
+  if (docFullscreen() && document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().then(go, go);
+  else go();
 }
 function fsOverlayVisible() { return !!document.getElementById("fs-overlay"); }
 function showFsOverlay() {
@@ -404,13 +427,21 @@ function hideFsOverlay() { const ov = document.getElementById("fs-overlay"); if 
 function installFullscreenWatch() {
   if (window.__fsListener) return;
   window.__fsListener = true;
+  let wasFs = isFullscreen();
   const onChange = () => {
-    if (isFullscreen()) { hideFsOverlay(); return; }
-    if (SESSION.task_started) SESSION.fullscreen_exits += 1;
-    if (FS_OVERLAY_ON) showFsOverlay();
+    const fs = isFullscreen();
+    if (fs) hideFsOverlay();
+    else {
+      if (wasFs && SESSION.task_started) SESSION.fullscreen_exits += 1;
+      if (FS_OVERLAY_ON) showFsOverlay();
+    }
+    wasFs = fs;
   };
   document.addEventListener("fullscreenchange", onChange);
   document.addEventListener("webkitfullscreenchange", onChange);
+  if (DM_FS) { if (DM_FS.addEventListener) DM_FS.addEventListener("change", onChange); else if (DM_FS.addListener) DM_FS.addListener(onChange); }
+  window.addEventListener("resize", onChange);
+  setInterval(onChange, 250);
   const block = (e) => { if (fsOverlayVisible()) { e.stopImmediatePropagation(); e.preventDefault(); } };
   window.addEventListener("keydown", block, true);
   window.addEventListener("keyup", block, true);
@@ -423,14 +454,13 @@ function fullscreenWait() {
       func: (done) => {
         const t0 = performance.now();
         showFsOverlay();
-        const check = () => {
+        // v1.6: checked every 100 ms instead of waiting for a full-screen event, which the green button may not send
+        const timer = setInterval(() => {
           if (!isFullscreen()) return;
-          document.removeEventListener("fullscreenchange", check);
-          document.removeEventListener("webkitfullscreenchange", check);
+          clearInterval(timer);
+          hideFsOverlay();
           done({ wait_ms: Math.round(performance.now() - t0) });
-        };
-        document.addEventListener("fullscreenchange", check);
-        document.addEventListener("webkitfullscreenchange", check);
+        }, 100);
       },
     }],
     conditional_function: () => MODE === "live" && !isFullscreen(),

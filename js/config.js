@@ -1,9 +1,9 @@
-// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.5.
+// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.6.
 // Every setting lives here. Spec rows (S##) are in Su2025_Exp1a_spec workbook, "Spec" tab.
 // Deviations (D##) are in its "Deviations log" tab.
 
 const CONFIG = {
-  version: "v1.5",
+  version: "v1.6",
 
   // ---------------------------------------------------------------- data and credit
   datapipe_id: "41EFAQ4kziJG",                  // DataPipe experiment ID (given 4 Nov 2026)
