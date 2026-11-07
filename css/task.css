@@ -1,0 +1,89 @@
+/* Plain white page, black text (S27: white background) */
+html, body { margin: 0; background: #ffffff; color: #000000; }
+.jspsych-display-element { background: #ffffff; }
+.jspsych-content { max-width: 100%; }
+.textpage { max-width: 720px; margin: 0 auto; padding: 0 16px; text-align: left;
+  font-family: Arial, Helvetica, sans-serif; font-size: 18px; line-height: 1.5; }
+.textpage h2 { font-size: 24px; }
+.textpage ol { padding-left: 1.4em; }
+.textpage input { font-size: 16px; padding: 4px; }
+table.tc { border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+table.tc th, table.tc td { border: 1px solid #bbb; padding: 4px 10px; text-align: right; }
+table.tc th:first-child, table.tc td:first-child { text-align: left; }
+
+/* ---- v1.4: screens modeled on the lab template (header bar + grey box) ---- */
+.pg-header { position: fixed; top: 0; left: 0; right: 0; z-index: 5; background: #ffffff; border-bottom: 1px solid #dddddd;
+  padding: 16px 16px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 30px; color: #000000; }
+.pg-wrap { width: 100%; min-height: 100vh; box-sizing: border-box; padding: 96px 16px 24px; display: flex; align-items: center; justify-content: center; }
+.pg-box { width: 100%; max-width: 900px; box-sizing: border-box; background: #f4f4f4; border: 2px solid #333333; border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.18); padding: 26px 40px; text-align: left; font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px; line-height: 1.6; color: #000000; }
+.pg-box.wide { max-width: 1000px; }
+.pg-box h2 { text-align: center; font-size: 32px; color: #333333; margin: 4px 0 18px; }
+.pg-box ul, .pg-box ol { padding-left: 1.4em; }
+.pg-box li { margin: 6px 0; }
+.pg-hint { text-align: center; font-style: italic; color: #666666; margin-top: 18px; }
+.pg-cols { display: flex; gap: 28px; align-items: center; }
+.pg-cols > .pg-text { flex: 1 1 50%; }
+.pg-cols > .pg-pic { flex: 1 1 50%; background: #ffffff; border: 1px solid #bbbbbb; padding: 14px; text-align: center; font-size: 15px; }
+.pg-nav { display: flex; justify-content: center; align-items: center; gap: 36px; margin-top: 22px; }
+.pg-nav .pg-count { color: #555555; font-size: 18px; }
+.pg-btn { font-family: Arial, Helvetica, sans-serif; font-size: 22px; padding: 10px 36px; background: #eeeeee; color: #000000;
+  border: 1px solid #777777; border-radius: 3px; cursor: pointer; }
+.pg-btn:disabled { color: #999999; background: #e8e8e8; border-color: #cccccc; cursor: default; }
+.pg-consent { max-width: 1100px; font-size: 16px; line-height: 1.55; }
+.pg-consent p { margin: 0 0 12px; }
+.pg-accept { display: block; text-align: center; color: #3c7a2c; font-weight: 700; text-decoration: underline; cursor: pointer; margin-top: 16px; }
+.pg-accept:hover { color: #2c5c20; }
+.pg-quiz .q { font-weight: 700; margin: 18px 0 6px; }
+.pg-quiz label { display: block; margin: 4px 0 4px 1.2em; cursor: pointer; }
+.pg-quiz input[type=radio] { width: 20px; height: 20px; margin-right: 12px; vertical-align: -3px; }
+.fs-screen { font-family: Arial, Helvetica, sans-serif; text-align: center; max-width: 900px; margin: 0 auto; padding: 0 16px; }
+.fs-title { color: #c0281f; font-size: 44px; font-weight: 700; margin: 0 0 16px; }
+.fs-text { font-size: 22px; line-height: 1.35; margin: 0 0 28px; }
+#jspsych-fullscreen-btn { font-size: 26px; padding: 12px 48px; }
+/* schematic pictures in the instructions (drawn, not task images) */
+.sk-frame { display: inline-block; width: 120px; height: 90px; border: 1px solid #999999; background: #ffffff; position: relative;
+  vertical-align: middle; font-size: 14px; color: #555555; }
+.sk-frame .sk-mid { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.sk-photo { background: #dfe6ec; }
+.sk-obj { width: 34px; height: 34px; border-radius: 50%; background: #e3a13a; border: 1px solid #6b4a12; }
+.sk-obj.alt { border-radius: 6px; background: #d9b25a; }
+.sk-key { display: inline-block; min-width: 34px; padding: 4px 8px; border: 2px solid #333333; border-radius: 6px; background: #ffffff;
+  font-weight: 700; font-size: 20px; margin-top: 8px; }
+.sk-seq { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sk-seq .sk-arrow { color: #777777; font-size: 18px; line-height: 1; }
+/* every template page uses the full window width, so boxes do not shrink to their text */
+.jspsych-content { width: 100%; }
+/* jsPsych's own buttons (full screen, check-ins, language form, debrief) in the same grey style as the template */
+.jspsych-btn { font-family: Arial, Helvetica, sans-serif; font-size: 22px; padding: 10px 36px; background: #eeeeee; color: #000000;
+  border: 1px solid #777777; border-radius: 3px; }
+.jspsych-btn:hover { background: #e2e2e2; border-color: #555555; }
+.pg-quiz { font-size: 18px; line-height: 1.4; }
+.pg-quiz .q { margin: 12px 0 4px; }
+.pg-quiz label { margin: 2px 0 2px 1.2em; }
+/* fixed box widths (not shrink-to-fit), capped at the window width */
+.pg-box { width: min(900px, calc(100vw - 32px)); max-width: none; }
+.pg-box.wide { width: min(1000px, calc(100vw - 32px)); }
+.pg-box.pg-consent { width: min(1100px, calc(100vw - 32px)); }
+
+/* v1.5 demo pictures in the instructions (stimulus 72, which is not in the task; D26, D27) */
+.dm-scene { width: 300px; max-width: 100%; display: block; margin: 0 auto; border: 1px solid #bbbbbb; }
+.dm-cap { margin-top: 8px; font-size: 15px; color: #444444; }
+.dm-seq { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.dm-seq .sk-arrow { color: #777777; font-size: 18px; line-height: 1; }
+.dm-box { display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 56px; border: 1px solid #999999; background: #ffffff; }
+.dm-plus { font-size: 26px; font-weight: 700; color: #000000; }
+.dm-thumb { width: 96px; height: 96px; border: 1px solid #999999; }
+.dm-pair { display: inline-flex; gap: 6px; }
+.dm-pair img { width: 108px; height: 81px; border: 1px solid #999999; background: #ffffff; }
+.dm-answer { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.dm-answer > span { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.dm-answer img { width: 200px; height: 150px; border: 1px solid #999999; background: #ffffff; display: block; }
+
+/* v1.5 full-screen message, from your screenshot: covers whatever screen is up */
+#fs-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(255, 255, 255, 0.94); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; font-family: Arial, Helvetica, sans-serif; cursor: auto; padding: 0 16px; }
+.fs-ov-title { color: #c0281f; font-weight: 700; font-size: 44px; margin: 0 0 18px; }
+.fs-ov-text { color: #000000; font-size: 24px; line-height: 1.35; margin: 0 0 40px; max-width: 1100px; }
+.fs-ov-btn { font-size: 26px; padding: 14px 44px; }

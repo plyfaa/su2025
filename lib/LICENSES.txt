@@ -1,0 +1,6 @@
+Bundled third-party files (unchanged copies of the npm "dist/index.browser.min.js" builds):
+  jspsych 8.3.0 and @jspsych/plugin-* (preload 2.1.0, browser-check 2.1.0,
+  fullscreen 2.1.0, html-button-response 2.1.0, instructions 2.1.0, survey-html-form 2.1.0,
+  call-function 2.1.0): MIT License, Copyright (c) Joshua R. de Leeuw and contributors.
+  @jspsych-contrib/plugin-pipe 0.6.0: MIT License, jsPsych contributors.
+Source: https://www.npmjs.com/package/jspsych and https://github.com/jspsych

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Object Recognition Study</title>
+  <!-- jsPsych 8.3.0 and plugins. Each file loads from lib/ (bundled copy, so this version never
+       changes); if lib/ is missing, the same pinned version loads from the unpkg CDN instead. -->
+  <link rel="stylesheet" href="lib/jspsych-8.3.0.css"
+        onerror="this.onerror=null;this.href='https://unpkg.com/jspsych@8.3.0/css/jspsych.css'">
+  <script>
+    function loadLib(local, cdn, globalName) {
+      document.write('<script src="' + local + '"><\/script>');
+      document.write('<script>window.' + globalName + ' || document.write(\'<script src="' + cdn + '"><\\/script>\')<\/script>');
+    }
+    const U = "https://unpkg.com/";
+    loadLib("lib/jspsych-8.3.0.min.js", U + "jspsych@8.3.0/dist/index.browser.min.js", "jsPsychModule");
+    loadLib("lib/plugin-preload-2.1.0.min.js", U + "@jspsych/plugin-preload@2.1.0/dist/index.browser.min.js", "jsPsychPreload");
+    loadLib("lib/plugin-browser-check-2.1.0.min.js", U + "@jspsych/plugin-browser-check@2.1.0/dist/index.browser.min.js", "jsPsychBrowserCheck");
+    loadLib("lib/plugin-fullscreen-2.1.0.min.js", U + "@jspsych/plugin-fullscreen@2.1.0/dist/index.browser.min.js", "jsPsychFullscreen");
+    loadLib("lib/plugin-html-button-response-2.1.0.min.js", U + "@jspsych/plugin-html-button-response@2.1.0/dist/index.browser.min.js", "jsPsychHtmlButtonResponse");
+    loadLib("lib/plugin-instructions-2.1.0.min.js", U + "@jspsych/plugin-instructions@2.1.0/dist/index.browser.min.js", "jsPsychInstructions");
+    loadLib("lib/plugin-survey-html-form-2.1.0.min.js", U + "@jspsych/plugin-survey-html-form@2.1.0/dist/index.browser.min.js", "jsPsychSurveyHtmlForm");
+    loadLib("lib/plugin-call-function-2.1.0.min.js", U + "@jspsych/plugin-call-function@2.1.0/dist/index.browser.min.js", "jsPsychCallFunction");
+    loadLib("lib/plugin-pipe-0.6.0.min.js", U + "@jspsych-contrib/plugin-pipe@0.6.0/dist/index.browser.min.js", "jsPsychPipe");
+  </script>
+  <link rel="stylesheet" href="css/task.css">
+  <script src="js/config.js"></script>
+  <script src="js/stimuli.js"></script>
+  <script src="js/plugin-scene-2afc.js"></script>
+  <script src="js/experiment.js"></script>
+</head>
+<body>
+  <script>
+    // If the page was opened without the rest of the task folder (js/, css/, lib/, stimuli/ next to it),
+    // say so instead of showing a blank page.
+    window.addEventListener("load", function () {
+      if (typeof initJsPsych === "undefined" || typeof buildTimeline === "undefined") {
+        document.body.innerHTML = '<div style="max-width:640px;margin:15vh auto;padding:0 16px;font:18px/1.5 Arial,sans-serif">' +
+          '<p>This page could not load the files it needs.</p>' +
+          '<p>If you opened index.html from your computer, open it from inside the full task folder, with the js, css, lib and stimuli folders next to it. ' +
+          'Without the lib folder, the page also needs an internet connection.</p></div>';
+      }
+    });
+  </script>
+</body>
+</html>
