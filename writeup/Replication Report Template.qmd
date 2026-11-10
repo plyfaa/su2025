@@ -130,13 +130,10 @@ You can comment this section out prior to final report with data collection.
   Any differences from what was described as the original plan, or “none”.
 
 
-
-
-
+#########################################################################################################
 
 
 ## Results
-
 
 ### Data preparation
 
@@ -146,6 +143,13 @@ Data preparation following the analysis plan.
 ### Data Preparation
 
 #### Load Relevant Libraries and Functions
+
+# install.packages(c("dplyr", "ggplot2", "lme4"))
+
+library(dplyr) # functions for picking rows and summarizing tables
+library(ggplot2) # functions for making plots
+library(lme4) # fits the statistical model that will be used 
+
 
 #### Import data
 
