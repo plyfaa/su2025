@@ -67,7 +67,7 @@ table.tc th:first-child, table.tc td:first-child { text-align: left; }
 .pg-box.wide { width: min(1000px, calc(100vw - 32px)); }
 .pg-box.pg-consent { width: min(1100px, calc(100vw - 32px)); }
 
-/* v1.5 demo pictures in the instructions (stimulus 72, which is not in the task; D26, D27) */
+/* demo pictures in the instructions (v1.7: stimulus 46, which is not in the task; was 72 in v1.5-v1.6) */
 .dm-scene { width: 300px; max-width: 100%; display: block; margin: 0 auto; border: 1px solid #bbbbbb; }
 .dm-cap { margin-top: 8px; font-size: 15px; color: #444444; }
 .dm-seq { display: flex; flex-direction: column; align-items: center; gap: 2px; }

@@ -1,6 +1,6 @@
 ---
-title: Replication of "Unifying Scene-Object Congruency and Incongruency Benefits in Object Perception" (2025, Journal of Experimental Psychology: General)
-author: Zhou Su, Yuyang Qiu, and Xiaowei Ding
+title: Replication of "Unifying Scene-Object Congruency and Incongruency Benefits in Object Perception" by Su, Qiu, and Ding (2025, Journal of Experimental Psychology: General)
+author: Plyfaa Suwanamalik-Murphy
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 format:
   html:
@@ -26,24 +26,26 @@ Su et al., 2025's experiment 1a effectively tests the paragraph above and relate
 
 ### A description of the stimuli and procedures that will be required to conduct this experiment, and what the challenges will be (1-2 paragraphs).
 
-The planned stimuli are photos of naturalistic real-world scenes taken from the SCEGRAM database (Öhlschläger & Võ, 2017), the Berlin Object in Scene database (Mohr et al., 2016), and the Internet. Congruency for the similarities between object-scene pairs will be determined with ConceptNet Numberbatch. An email to the author, Dr. Xiaowei Ding requesting access to their stimulus set has been sent (10/21/2026). 
+The planned stimuli are photos of naturalistic real-world scenes taken from the SCEGRAM database (Öhlschläger & Võ, 2017), the Berlin Object in Scene database (Mohr et al., 2016), and the Internet. Congruency for the similarities between object-scene pairs will be determined with ConceptNet Numberbatch. The authors shared their stimulus set on Nov 1, 2026.
 
 The planned procedure for the session: 
-Consent, instructions, 96 trials in random order (90 experimental, 6 catch), debrief, then SONA credit. 
+Consent, instructions with one practice trial and a short quiz on the instructions, 95 trials in random order (89 experimental, 6 catch), two language questions, debrief, then SONA credit. One of the 90 stimuli is the example in the instructions, so it is not in the task (see Differences from Original Study).
 
 What a trial will look like: 
-Screen              Duration                            Participant
-Fixation cross	    800–1,000 ms, random each trial	    Looks at the center
-Scene	            2,500 ms	                        Views freely
-Fixation cross	    500 ms	                            Waits
-Two objectse	    Until response key                  F for the left object, J for the right object 
+
+| Screen | Duration | Participant |
+|---|---|---|
+| Fixation cross | 800-1,000 ms, random each trial | Looks at the center |
+| Scene | 2,500 ms | Views freely |
+| Fixation cross | 500 ms | Waits |
+| Two objects | Until a key press, up to 2,500 ms | F for the left object, J for the right object |
+
+The 2,500 ms limit on the last screen comes from Figure 2B ("Max. 2,500ms", p. 1744). The text gives no limit. A trial with no answer by then ends and is saved as timed out.
 
 Challenge: 
 The original study used the Chinese version of Numberbatch, and the stimuli were screened for familiarity with Chinese participants. English scores will likely shift some congruency values, and some objects may be less familiar or more familiar to UCSD students.
 
-**** Adressing Haoyu's feedback to describe the difference between 1a and 1b: 
-
-In 1a and 1b the participants go through the same identification task. The main difference with 1b is that participants have an additional session where they have to complete and fill out a form where they name all the scenes and objects that were from the stimuli (e.g., bathroom and umbrella).
+**Scope: Experiment 1a only.** In 1a and 1b the participants do the same identification task. 1b adds a questionnaire after the task in which each participant names every scene and object (e.g., bathroom and umbrella), and congruency is then recomputed from that person's own labels (p. 1746). This replication does not include the naming questionnaire, so it replicates 1a. Experiment 1b is not replicated.
 
 
 
@@ -53,9 +55,20 @@ In 1a and 1b the participants go through the same identification task. The main 
 
 Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
 
-For Experiment 1a they give only an "observed power" of 100% (p. 1743). I don't believe this means anything about the N a new study needs. 
+Original effect (Experiment 1a, N = 69, 76 analyzed stimuli): the quadratic term of congruency predicted 2AFC accuracy, β = 0.31, 95% CI [0.24, 0.37], OR = 1.36, 95% CI [1.27, 1.45], in a logistic mixed model with a random intercept for each participant (p. 1745). β is on the log-odds scale and OR is the odds ratio.
 
-In experiment 1b they write: "Based on the results of Experiment 1a, a minimum of 46 participants would be required to achieve 80% power" (p. 1746). They do not give 90% or 95%, and they do not say how 46 was computed.
+The paper gives no power analysis I can use. For Experiment 1a it reports only an "observed power" of 100% (p. 1743), which is computed from the effect it found and says nothing about the N a new study needs. Experiment 1b says "a minimum of 46 participants would be required to achieve 80% power" (p. 1746), but not how 46 was computed, and it is for 1b. I do not use it to set N.
+
+Plan: a simulation-based power analysis (Lab 4, Part 9). Each simulated dataset has N participants, each answering the 76 analyzed stimuli, a random intercept per participant, and a true quadratic effect. Each dataset is analyzed with the confirmatory test in the Analysis Plan. Power is the share of simulated datasets in which that test gives p < .05. Published effects tend to be inflated, so I also simulate half the original effect.
+
+| True quadratic effect | N for 80% power | N for 90% power | N for 95% power |
+|---|---|---|---|
+| β = 0.31 (original) | [from simulation] | [from simulation] | [from simulation] |
+| β = 0.155 (half the original) | [from simulation] | [from simulation] | [from simulation] |
+
+For comparison, the 2.5 × original N rule for replications (Simonsohn, 2015) gives 2.5 × 69 = 173 participants.
+
+Limitation: the paper does not say how the polynomial terms were scaled, and the size of β depends on that scaling. The simulation uses z-scored orthogonal polynomial terms (`scale(poly(congruency, 2))` in R), so its β is only roughly comparable to the paper's.
 
 ### Planned Sample
 
@@ -63,7 +76,9 @@ Planned sample size and/or termination rule, sampling frame, known demographics 
 
 Original: "69 participants (37 participants reported their gender as female, 32 as male; age: M = 23.01 years, SD = 2.55)."
 
-I'm aiming for ~100-120 participants through UCSD's SONA system. 
+Target: N = [X] participants who pass the catch-trial rule, recruited through UCSD's SONA system, with X taken from the power simulation above. The consent form in the task currently says "approximately 150 participants". The target and the consent form have to agree, and the consent number has to match the IRB protocol.
+
+Stopping rule: collect until [X] participants pass the catch-trial rule, or until the end of fall quarter 2026, whichever comes first. The original excluded 8 of 60 participants (13%) for catch trials in Experiment 1b (p. 1746), so I plan for about 15% exclusions and will open about X / 0.85 SONA slots. I will not run the confirmatory test before data collection stops. Pilot and test sessions are tagged in the data (`sample` column) and do not count toward N.
 
 Eligibility: 18 or older, fluent in English, normal or corrected-to-normal vision, and a laptop or desktop computer with a keyboard. No other selection criteria. 
 
@@ -76,13 +91,13 @@ corrected-to-normal vision."
 
 All materials - can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
 
-I plan to use the original stimulus set and have emailed the author (Dr. Xiaowei Ding) listed to contact on the paper (they have responded, but have not provided the set yet). 
+I use the original stimulus set, which the authors shared on Nov 1, 2026: 90 scenes, each with its target and lure, plus the six catch scenes and their answer screens.
 
 Scene stimuli: "90 scene images were included in the stimulus set, 49 of which were obtained from the SCEGRAM database (Öhlschläger & Võ, 2017), 11 from the Berlin Object in Scene database (Mohr et al., 2016), and an additional 30 from the Internet" (p. 1743). Each scene contains one target object.
 
 Alternatives: "In the two alternatives of each trial, there was always a target object appearing in the scene and a lure item. The lure items were obtained from the Internet. Lures always belonged to the same category as the target, but were different exemplars" (p. 1743).
 
-Catch trials. Six catch scenes, each followed by two scene names. The paper does not list them and I've requested them in the email. If they are not available I plan to use six SCEGRAM scenes that are not in the main set. 
+Catch trials. Six catch scenes, each followed by two scene names, from the authors' files. The paper does not list them.
 
 "We used the Chinese version of ConceptNet Numberbatch to generate semantic vectors.... We calculated the semantic similarity between the scene vector and the object vector (i.e., the cosine similarity of the vectors...)" (p. 1743).
 --> I will use the English Numberbatch version. The authors expected this to work: "We expect that our results can be extended as long as congruency is computed on the basis of the language commonly used by the participants" (p. 1757).
@@ -96,28 +111,55 @@ Can quote directly from original article - just put the text in quotations and n
 3. After another fixation cross (500 ms), two alternatives are presented on the screen. Participants performed a 2AFC task in which they selected the alternative that had appeared in the scene. Participants pressed 'F' for left and 'J' for right on the keyboard to indicate which side they believed the target object appeared on. 
 4. In addition, six catch trials assessed participants' engagement. In these trials, a scene picture (e.g., bathroom) was presented, followed by a 2AFC question asking participants to identify the category of the scene they had just seen (e.g., kitchen or bathroom)" (p. 1745).
 
+The paper gives two ranges for the first fixation cross: 800-1,000 ms in the text (p. 1745) and 500-800 ms in the Figure 2 caption (p. 1744). I follow the text. The response screen ends after 2,500 ms if there is no answer (Figure 2B).
+
+Timing. Each screen's duration is rounded to a whole number of display frames at the participant's refresh rate, and the measured duration of every screen is saved with each trial. A timing-check mode (`?timingcheck=1` added to the task link) runs 20 trials on any computer and reports how far each screen was from its intended duration.
+
 Stimuli selection: "scene stimuli with a broad range of scene-object congruencies." 
 
 "all selected stimuli underwent a rigorous screening process using a questionnaire. An additional 12 participants (seven females; M = 22.83 years, SD = 1.07 years; undergraduate and graduate students of Sun Yat-sen University) completed the questionnaire. They were asked to name the scene and the target objects and to rate the congruency between the two using a 7-point Likert scale. The naming results were then cross-checked by two independent observers. Only stimuli correctly identified by more than 10 participants were retained for inclusion in the stimulus set." 
 
-Familiarity ratings: 90 object names will be shown to each participant with no image. The question reads “How familiar is this object to you?” and participants click a number from 1 (not at all familiar) to 10 (very familiar). No time limit. The 10-point scale matches the original.
+Familiarity ratings come from a separate group of raters who do not do the 2AFC task, as in the original, where 34 other students rated each object name on a 10-point scale (p. 1745). Each rater sees the 60 different object names used in the 90 stimuli, one at a time with no image, and answers "How familiar is this word to you?" from 1 (not at all familiar) to 10 (extremely familiar), with no time limit. The mean rating of each name is the familiarity covariate. Rating in the same session as the task would come right after seeing the objects, which could raise the ratings. The rating task is a separate short online study (an earlier version is in this repo's history, commit bbd9417). Planned number of raters: about 34, the original's number [to confirm].
 
 ### Analysis Plan 
 
 Original: "We evaluated our hypotheses by comparing two models: one that included both linear and quadratic components derived from a second-order polynomial expansion of scene-object congruency (quadratic model) and another that included only a linear component (linear model)." (p. 1745).
 
-I plan to reuse the four image-based covariates and collect new familiarity ratings.
+I plan to reuse the four image-based covariates and collect new familiarity ratings from a separate group of raters (see Procedure).
 
 "We also considered some confounding variables: saliency, size, center proximity, complexity, and familiarity, which were included in the further regression model analysis to control for their potential effects. For saliency, we calculated the saliency rank within 15 simulated fixations using the Saliency Toolbox (Walther & Koch, 2006)."
 
-**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.
+#### Exclusions, in this order
+
+| Step | Rule | Source |
+|---|---|---|
+| 1 | Keep real sessions only: `sample` is "main". Pilot and test runs are out. | Task v1.7 tags each session |
+| 2 | Keep one file per participant. If an upload was retried, the same session is saved twice (`..._trials_retry1.csv`); keep one copy per `subject_id`. | Task saving code |
+| 3 | Keep participants with all 6 catch trials correct. | The paper excluded people "who did not correctly complete the catch trials" (p. 1746) without giving a number; I read it as all 6. |
+| 4 | Keep the 76 analyzed stimuli (`analyzed_stimulus` is 1). Catch trials and the 13 stimuli shown but not analyzed are out. | Table S1 |
+| 5 | Exclude timeouts: trials with no answer within 2,500 ms (`timed_out` is 1, `accuracy` is empty). They are not counted as wrong. I report how many there were per participant. | My decision. The paper does not say. A timeout has no response time, so the 2 SD rule in step 6 cannot apply to it. |
+| 6 | Response time trim, per participant: drop trials whose response time is more than 2 SD above or below that participant's mean, computed on the trials left after step 5. | "Trials with RTs greater or less than 2 SD were excluded" (p. 1745). The paper does not say per participant or across the sample. Per participant is the usual reading. |
+
+`glmer` in R drops rows with an empty outcome without a warning, so step 5 is done explicitly in the code before the model.
+
+#### Confirmatory test
+
+Two logistic mixed models of trial accuracy (1 = correct, 0 = wrong), each with a random intercept for each participant, as in the original's final model (p. 1745):
+
+- Linear model: the linear term of congruency.
+- Quadratic model: the linear and quadratic terms from a second-order polynomial of congruency.
+
+The two are compared with a likelihood-ratio χ² test, AIC and BIC (lower is better), as in the original. The result replicates if the quadratic model fits better (χ² test p < .05) and the quadratic term is positive, which is the U shape the original found.
 
 ### Differences from Original Study
 
 Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.
 
-- More participants will be tested compared to the original study (account for data loss). 
-- English vs Chinese speaking participants. I expect there to be some slight differences here especially as I plan to recollect the ratings. 
+- Sample size comes from a new power simulation (see Power Analysis), with about 15% extra for catch-trial exclusions.
+- English vs Chinese speaking participants. I expect there to be some slight differences here especially as I plan to recollect the ratings. The familiarity raters are also English-speaking UCSD students rating English object names.
+- Example stimulus: stimulus 46 (kitchen, cutting board), one of the 14 stimuli the original showed but did not analyze, is the example in the instructions and the practice trial, so it is not in the task. Participants see 89 experimental trials instead of 90 (95 with catch trials). All 76 analyzed stimuli are kept. Stimulus 67 uses the same target picture as 46, so that picture appears again in trial 67, which is also not analyzed.
+- Instructions include one practice trial and a short quiz on the instructions. The original's instructions are not published.
+- Response limit and timeouts: the 2,500 ms limit comes from Figure 2B. The paper does not say how trials with no answer were handled; here they are excluded (Analysis Plan, step 5).
 
 ### Methods Addendum (Post Data Collection)
 

@@ -1,9 +1,9 @@
-// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.6.
+// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.7.
 // Every setting lives here. Spec rows (S##) are in Su2025_Exp1a_spec workbook, "Spec" tab.
 // Deviations (D##) are in its "Deviations log" tab.
 
 const CONFIG = {
-  version: "v1.6",
+  version: "v1.7",
 
   // ---------------------------------------------------------------- data and credit
   datapipe_id: "41EFAQ4kziJG",                  // DataPipe experiment ID (given 4 Nov 2026)
@@ -13,6 +13,11 @@ const CONFIG = {
   sona_credit_url: "",
   // URL parameter names the SONA ID may arrive under (SONA study URL should end in ?sona_id=%SURVEY_CODE%).
   sona_id_params: ["sona_id", "id", "survey_code", "SONA_ID"],
+  // v1.7: which sample a session belongs to, taken from the link (&sample=pilotA). Letters, digits and hyphens only.
+  // The SONA link has no sample parameter, so real participants get default_sample. It goes into the file names
+  // and into a "sample" column, so test runs and pilots can be kept out of the main analysis.
+  sample_param: "sample",
+  default_sample: "main",
   // Shown to participants if saving fails or the link had no SONA ID. Put your study email here.
   contact_email: "psuwanamalikmurphy@ucsd.edu",   // shown on the introduction page, and if saving fails or the link has no SONA ID
 
@@ -42,19 +47,23 @@ const CONFIG = {
 
   // ---------------------------------------------------------------- design
   n_catch: 6,                                   // S68: "six catch trials were interspersed"
-  // v1.5 (your decision, 6 Nov 2026; D27): stimulus 72 (kitchen, egg carton) is the demo example, so it is taken out
-  // of the task. 89 main trials are shown (S73 says 90) and 75 are analyzed (S35 says 76). stimuli.js keeps row 72 for the record.
-  removed_from_task: [72],
-  n_main: 89,                                   // S73: 90 in the original, minus stimulus 72 (D27)
+  // v1.7 (Bria Long, issue #4): the demo example is now stimulus 46 (kitchen, cutting board), one of the 14 rows the
+  // original showed but never analyzed (starred in Table S1). It is taken out of the task, and stimulus 72 (egg carton,
+  // the v1.5-v1.6 demo) goes back in. 89 main trials are shown (S73 says 90) and all 76 analyzed items are kept.
+  // Stimulus 67 (living room, cutting board, also not analyzed) uses the same target picture as 46, so that one
+  // picture is seen in the instructions and again in trial 67. 67 is not analyzed. stimuli.js keeps row 46 for the record.
+  removed_from_task: [46],
+  n_main: 89,                                   // S73: 90 in the original, minus stimulus 46 (v1.7; was 72 in v1.5-v1.6)
   // S78 not reported: target on the left in half the main trials (D13). With 89, each person gets 44 or 45 on
   // the left (chosen at random), so it is half across people.
   // Practice (S75: none in the original). v1.5 (your addition P11; D26): one practice trial with the demo pictures,
   // repeated until it is answered correctly, at most practice_max_tries times per pass through the instructions.
   practice_max_tries: 3,
   demo: {
-    scene_circled: "stimuli/demo/scene72_circled.png",  // scene 72 with a red circle drawn around the egg carton
-    target: "stimuli/target/72.png",                  // the egg carton from the photo
-    lure: "stimuli/lure/72.png",                      // the other egg carton (stimulus 72's own lure)
+    stim_id: 46,                                      // saved as stim_id on the practice trial
+    scene_circled: "stimuli/demo/scene46_circled.png",  // scene 46 with a red circle drawn around the cutting board
+    target: "stimuli/target/46.png",                  // the cutting board from the photo
+    lure: "stimuli/lure/46.png",                      // the other cutting board (stimulus 46's own lure)
   },
   breaks: 0,                                    // S76 not reported: none (D13)
   catch_pass_rule: 6,                           // S15 not reported: all 6 correct (D11). Used in analysis, not in the task.
