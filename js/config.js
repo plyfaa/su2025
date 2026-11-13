@@ -8,7 +8,7 @@ const CONFIG = {
   // Paste the SONA credit-granting URL here once SONA approves the study. Keep "survey_code="
   // at the end; the participant's SONA ID is appended to it. While this is empty, the last
   // screen says thank you and does not redirect.
-  sona_credit_url: "",
+  sona_credit_url: "https://ucsd.sona-systems.com/webstudy_credit.aspx?experiment_id=2595&credit_token=4a540e18c82047788a5a16ea4ac8a7ce&survey_code=",
   // URL parameter names the SONA ID may arrive under (SONA study URL should end in ?sona_id=%SURVEY_CODE%).
   sona_id_params: ["sona_id", "id", "survey_code", "SONA_ID"],
   // Which sample a session belongs to, taken from the link (&sample=pilotA). Letters, digits and hyphens only.
