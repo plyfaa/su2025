@@ -11,7 +11,7 @@ table.tc { border-collapse: collapse; margin: 12px 0; font-size: 15px; }
 table.tc th, table.tc td { border: 1px solid #bbb; padding: 4px 10px; text-align: right; }
 table.tc th:first-child, table.tc td:first-child { text-align: left; }
 
-/* ---- v1.4: screens modeled on the lab template (header bar + grey box) ---- */
+/* ---- screens modeled on the lab template (header bar + grey box) ---- */
 .pg-header { position: fixed; top: 0; left: 0; right: 0; z-index: 5; background: #ffffff; border-bottom: 1px solid #dddddd;
   padding: 16px 16px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 30px; color: #000000; }
 .pg-wrap { width: 100%; min-height: 100vh; box-sizing: border-box; padding: 96px 16px 24px; display: flex; align-items: center; justify-content: center; }
@@ -67,7 +67,7 @@ table.tc th:first-child, table.tc td:first-child { text-align: left; }
 .pg-box.wide { width: min(1000px, calc(100vw - 32px)); }
 .pg-box.pg-consent { width: min(1100px, calc(100vw - 32px)); }
 
-/* v1.5 demo pictures in the instructions (stimulus 72, which is not in the task; D26, D27) */
+/* demo pictures in the instructions (stimulus 46, which is not in the task) */
 .dm-scene { width: 300px; max-width: 100%; display: block; margin: 0 auto; border: 1px solid #bbbbbb; }
 .dm-cap { margin-top: 8px; font-size: 15px; color: #444444; }
 .dm-seq { display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -81,7 +81,7 @@ table.tc th:first-child, table.tc td:first-child { text-align: left; }
 .dm-answer > span { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .dm-answer img { width: 200px; height: 150px; border: 1px solid #999999; background: #ffffff; display: block; }
 
-/* v1.5 full-screen message, from your screenshot: covers whatever screen is up */
+/* full-screen message: covers whatever screen is up */
 #fs-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(255, 255, 255, 0.94); display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center; font-family: Arial, Helvetica, sans-serif; cursor: auto; padding: 0 16px; }
 .fs-ov-title { color: #c0281f; font-weight: 700; font-size: 44px; margin: 0 0 18px; }

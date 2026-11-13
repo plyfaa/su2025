@@ -58,3 +58,8 @@ rsconnect/
 # html files (output by Quarto)
 # *.html
 .DS_Store
+
+# Raw DataPipe files hold each participant's SONA ID. Keep every raw file out of the repo.
+# Raw downloads go in data/raw/ (ignored as a whole); only *-anon.csv files in data/ are committed.
+data/raw/
+data/**/*.json

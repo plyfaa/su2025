@@ -9,7 +9,6 @@ var jsPsychScene2AFC = (function (jspsych) {
 
   const info = {
     name: "scene-2afc",
-    version: "1.0.0",
     parameters: {
       trial_kind: { type: T.STRING, default: "main" },          // "main" or "catch"
       scene: { type: T.IMAGE, default: undefined },
@@ -98,7 +97,7 @@ var jsPsychScene2AFC = (function (jspsych) {
         if (k === trial.key_left || k === trial.key_right) earlyPresses += 1;
       };
       document.addEventListener("keydown", onEarlyKey);
-      // v1.6: use the study's own check (page AND window, experiment.js) when it is there, so a trial ended after the
+      // Use the study's own check (page AND window, experiment.js) when it is there, so a trial ended after the
       // green button records fullscreen_at_end = 0
       const isFullscreen = () => (typeof window.isFullscreen === "function" ? window.isFullscreen()
         : !!(document.fullscreenElement || document.webkitFullscreenElement));

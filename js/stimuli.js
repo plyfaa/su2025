@@ -1,5 +1,5 @@
-// Stimulus list for Experiment 1a, v1.6. Row 72 stays here for the record; config.js removed_from_task
-// takes it out of the task, because it is the demo example (D27).
+// Stimulus list for Experiment 1a. Row 46 stays here for the record; config.js removed_from_task
+// takes it out of the task, because it is the demo example.
 // Main trials: Table S1 rows 1-90 (supplement S2.1); file number = Table S1 row (S112).
 // congruency = Table S1 value, 2 decimals (S50); row 86 uses Table S1's -0.03 over Figure 2C's -0.02 (S51).
 // analyzed = 0 for the 14 rows starred in Table S1 (S35, S86); all 90 are shown (S36, S73).

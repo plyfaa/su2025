@@ -1,6 +1,7 @@
-// Su, Qiu & Ding (2025) Experiment 1a, online replication. Version v1.6.
+// Su, Qiu & Ding (2025) Experiment 1a, online replication.
 // Modes (URL parameters):
 //   (none)                    the real study
+//   &sample=pilotA            tags the session as a pilot or test run (default "main"; see CONFIG.sample_param)
 //   ?simulate=data-only&sessions=N   N simulated sessions, no saving (developer check)
 //   ?timingcheck=1            20 auto-answered trials, then a timing summary (check on your own laptop)
 "use strict";
@@ -13,12 +14,24 @@ function getSonaId() {
   for (const k of CONFIG.sona_id_params) { const v = URLP.get(k); if (v) return v; }
   return "";
 }
+// The sample tag from the link, e.g. &sample=pilotA. Anything other than letters, digits and hyphens is
+// dropped, so the tag is safe in a file name and cannot break the underscore-separated fields.
+function getSample() {
+  const v = (URLP.get(CONFIG.sample_param) || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 24);
+  return v || CONFIG.default_sample;
+}
+// File names: study_experiment_sample_date_subject, e.g.
+// su2025_exp1a_main_2026-11-12_5c36tad9ns_trials.csv. Underscores separate fields and hyphens are only used
+// inside a field, so R can split a name on "_". The date is the session's start date in UTC (year-month-day).
+function fileBase() {
+  return ["su2025", "exp1a", SESSION.sample, SESSION.start_time.slice(0, 10), SESSION.subject_id].join("_");
+}
 function docFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
-// v1.6 (D08): on a Mac, leaving full screen with the green window button can leave Chrome telling the page it is still
-// in full screen while the window is back to normal size (your test, 7 Nov 2026). The browser's display-mode setting
+// D08: on a Mac, leaving full screen with the green window button can leave Chrome telling the page it is still
+// in full screen while the window is back to normal size. The browser's display-mode setting
 // follows the window itself. So once this browser has reported display-mode "fullscreen" while in full screen, a page
 // that says "full screen" while display-mode does not counts as NOT in full screen. A browser that never reports
-// display-mode "fullscreen" is judged by the page alone, as in v1.5, so nobody is stopped by a browser that lacks it.
+// display-mode "fullscreen" is judged by the page alone, so nobody is stopped by a browser that lacks it.
 const DM_FS = window.matchMedia ? window.matchMedia("(display-mode: fullscreen)") : null;
 let DM_SEEN = false;
 function isFullscreen() {
@@ -68,7 +81,7 @@ function measureRefresh(nFrames) {
 
 // ------------------------------------------------------------------ session state
 const SESSION = {
-  version: CONFIG.version, mode: MODE, sona_id: getSonaId(), subject_id: null,
+  mode: MODE, sample: getSample(), sona_id: getSonaId(), subject_id: null,
   start_time: new Date().toISOString(), end_time: null,
   screen_width: window.screen.width, screen_height: window.screen.height,
   device_pixel_ratio: window.devicePixelRatio, user_agent: navigator.userAgent,
@@ -89,7 +102,7 @@ function downloadTrials() {
   if (!SAVED_OUT) return;
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([SAVED_OUT.trials_csv], { type: "text/csv" }));
-  a.download = `exp1a_${CONFIG.version}_${SESSION.subject_id}_trials.csv`;
+  a.download = `${fileBase()}_trials.csv`;
   document.body.appendChild(a); a.click(); a.remove();
 }
 
@@ -110,7 +123,7 @@ function applySizes() {
 }
 
 // ------------------------------------------------------------------ trial list (D13)
-// The main stimuli shown: Table S1 rows 1-90 minus CONFIG.removed_from_task (v1.5: stimulus 72, the demo example; D27).
+// The main stimuli shown: Table S1 rows 1-90 minus CONFIG.removed_from_task (stimulus 46, the demo example).
 const TASK_STIMULI = MAIN_STIMULI.filter((m) => !CONFIG.removed_from_task.includes(m.stim_id));
 function buildTrialList(jsPsych) {
   const R = jsPsych.randomization;
@@ -177,7 +190,7 @@ function makeTrial(jsPsych, item, index) {
   };
 }
 
-// ------------------------------------------------------------------ check-ins (your additions P8 and P9; D23, D24)
+// ------------------------------------------------------------------ check-ins (P8 and P9; D23, D24)
 // Not part of the original task. After each trial, the task may pause with a message:
 //   P8: no F or J answer in CONFIG.checkin_after_misses trials in a row -> "Are you still there?"
 //   P9: CONFIG.rush_trials of the last CONFIG.rush_window trials were rushed -> "Please slow down a little"
@@ -224,7 +237,7 @@ function checkInNode(jsPsych) {
   };
 }
 
-// ------------------------------------------------------------------ screens modeled on the lab template (v1.4; D09)
+// ------------------------------------------------------------------ screens modeled on the lab template (D09)
 // A header bar across the top and a grey box in the middle. `fill` makes the page fill the window and centre the
 // box (used when the buttons are inside the box); without it, a plugin's own buttons follow the box.
 function pageHTML(header, inner, boxClass = "", fill = true) {
@@ -271,9 +284,10 @@ function pagedScreen(jsPsych, phase, getHeader, getPages, lastLabel) {
   });
 }
 
-// Instruction pages (D09; the original's instructions are not published, S82). v1.5: the example uses real pictures
-// (your request, 6 Nov 2026): scene 72 with a red circle around the egg carton, its target and its lure. Stimulus 72 is
-// not in the task (D27), so nothing the person sees here comes up again.
+// Instruction pages (D09; the original's instructions are not published, S82). The example uses real pictures:
+// scene 46 with a red circle around the cutting board, its target and its lure. Stimulus 46 is not in
+// the task and was never analyzed in the original. Its target picture is also stimulus 67's target, so that one picture
+// comes up again in trial 67, which is not analyzed either.
 const sk = {
   frame: (inner, cls = "") => `<span class="sk-frame ${cls}"><span class="sk-mid">${inner}</span></span>`,
 };
@@ -283,7 +297,7 @@ function instructionPages() {
   return [
     { title: "The task",
       text: `<p>In this study, you will see photos of everyday places, such as kitchens and bathrooms.</p>
-             <p>After each photo, you will see two objects of the same kind, such as two egg cartons. Only one of them is the exact object that was in the photo. Your job is to pick that one.</p>`,
+             <p>After each photo, you will see two objects of the same kind, such as two cutting boards. Only one of them is the exact object that was in the photo. Your job is to pick that one.</p>`,
       pic: `<img class="dm-scene" src="${D.scene_circled}" alt="Example photo of a kitchen"><div class="dm-cap">Example photo. The red circle is only in this example.</div>` },
     { title: "Each trial",
       text: `<ol><li>A small <b>+</b> appears in the middle of the screen. Look at it.</li>
@@ -297,10 +311,10 @@ function instructionPages() {
     { title: "How to answer",
       text: `<p>Press <b>F</b> if the object from the photo is on the <b>left</b>.</p>
              <p>Press <b>J</b> if it is on the <b>right</b>.</p>
-             <p>In this example, the egg carton from the photo is on the left, so the answer is <b>F</b>.</p>
+             <p>In this example, the cutting board from the photo is on the left, so the answer is <b>F</b>.</p>
              <p>Wait until the two objects appear before you press a key. Answer as quickly and accurately as you can. If you take too long, the study moves on to the next trial.</p>`,
-      pic: `<div class="dm-answer"><span><img src="${D.target}" alt="The egg carton from the photo"><span class="sk-key">F</span></span>
-            <span><img src="${D.lure}" alt="A different egg carton"><span class="sk-key">J</span></span></div>` },
+      pic: `<div class="dm-answer"><span><img src="${D.target}" alt="The cutting board from the photo"><span class="sk-key">F</span></span>
+            <span><img src="${D.lure}" alt="A different cutting board"><span class="sk-key">J</span></span></div>` },
     { title: "A few different questions",
       text: `<p>A few times, you will get a different question about the photo, such as which kind of room it showed.</p>
              <p>Answer it with the same keys: <b>F</b> for the answer on the left, <b>J</b> for the answer on the right.</p>`,
@@ -314,8 +328,8 @@ function instructionPages() {
   ];
 }
 
-// Practice trial (your addition P11, 6 Nov 2026; D26; S75: none in the original). The circled kitchen photo, then the
-// two egg cartons with the one from the photo on the right (answer J; the instructions showed it on the left), with the
+// Practice trial (P11; D26; S75: none in the original). The circled kitchen photo, then the
+// two cutting boards with the one from the photo on the right (answer J; the instructions showed it on the left), with the
 // task's own timing and 2.5-second limit. Feedback follows. It repeats until answered correctly, at most
 // CONFIG.practice_max_tries times per pass through the instructions. Logged as phase "practice"; not in the trial file.
 const PRACTICE = { attempts: 0, passed: false, triesThisPass: 0, passedThisPass: false };
@@ -331,7 +345,7 @@ function practiceNode(jsPsych) {
     scene_px: () => SIZES.scene_px, option_w_px: () => SIZES.option_w_px, option_h_px: () => SIZES.option_h_px,
     fixation_px: () => SIZES.fixation_px, fixation_line_px: () => SIZES.fixation_line_px, text_px: () => SIZES.text_px,
     background: CONFIG.background, sim_p_correct: 1,
-    data: { phase: "practice", stim_id: 72, target_side: "right", left_file: D.lure, right_file: D.target, scene_file: D.scene_circled },
+    data: { phase: "practice", stim_id: CONFIG.demo.stim_id, target_side: "right", left_file: D.lure, right_file: D.target, scene_file: D.scene_circled },
     on_finish: (d) => {
       PRACTICE.attempts += 1; PRACTICE.triesThisPass += 1; d.practice_attempt = PRACTICE.attempts;
       if (d.accuracy === 1) { PRACTICE.passed = true; PRACTICE.passedThisPass = true; }
@@ -344,9 +358,9 @@ function practiceNode(jsPsych) {
     stimulus: () => {
       const d = lastPractice(jsPsych);
       let title, text;
-      if (d.accuracy === 1) { title = "Correct!"; text = "The egg carton from the photo was on the right, so <b>J</b> was the correct answer."; }
-      else if (d.timed_out === 1) { title = "Too slow"; text = "Please answer within 2.5 seconds after the two objects appear. The egg carton from the photo was on the right, so the answer was <b>J</b>."; }
-      else { title = "Not quite"; text = "The egg carton from the photo was on the <b>right</b>, so the answer was <b>J</b>."; }
+      if (d.accuracy === 1) { title = "Correct!"; text = "The cutting board from the photo was on the right, so <b>J</b> was the correct answer."; }
+      else if (d.timed_out === 1) { title = "Too slow"; text = "Please answer within 2.5 seconds after the two objects appear. The cutting board from the photo was on the right, so the answer was <b>J</b>."; }
+      else { title = "Not quite"; text = "The cutting board from the photo was on the <b>right</b>, so the answer was <b>J</b>."; }
       const next = d.accuracy === 1 ? "<p>Next, a few quick questions about the instructions.</p>"
         : PRACTICE.triesThisPass < CONFIG.practice_max_tries ? "<p>Let's try it again.</p>"
           : "<p>Next, a few quick questions about the instructions.</p>";
@@ -360,7 +374,7 @@ function practiceNode(jsPsych) {
   ];
 }
 
-// Comprehension check (your addition P10; D25). All answers must be right to start; otherwise the person
+// Comprehension check (P10; D25). All answers must be right to start; otherwise the person
 // reads the instructions again and answers again. Every attempt is logged; nobody is excluded for it.
 const QUIZ = { attempts: 0, passed: false };
 const QUIZ_QUESTIONS = [
@@ -391,12 +405,12 @@ function quizScreen(jsPsych) {
   }, () => { QUIZ.attempts += 1; QUIZ.passed = true; SESSION.quiz_attempts = QUIZ.attempts; return { attempt: QUIZ.attempts, passed: 1 }; });
 }
 
-// ------------------------------------------------------------------ full screen (D08; v1.5 message from your screenshot)
+// ------------------------------------------------------------------ full screen (D08)
 // From the "Enter full screen" click until the save step, leaving full screen covers the page at once with "Please use
 // full screen" and a button to go back, on any screen. Keys do nothing while it is up, so F or J cannot answer for objects
 // the person cannot see. Exits during the task are counted (fullscreen_exits). Before each trial and the practice, the
 // study also waits until the page is back in full screen (fullscreenWait).
-// v1.6: "full screen" means isFullscreen() above (page AND window), checked on every full-screen and display-mode change,
+// "Full screen" means isFullscreen() above (page AND window), checked on every full-screen and display-mode change,
 // on every window resize, and every 250 ms as a backup in case a browser sends no event.
 let FS_OVERLAY_ON = false;
 function requestFullscreen() {
@@ -405,7 +419,7 @@ function requestFullscreen() {
     const p = el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen ? el.webkitRequestFullscreen() : null;
     if (p && p.catch) p.catch(() => {});
   };
-  // v1.6: if the page still says "full screen" but the window is not (green button), leave the page's full screen
+  // If the page still says "full screen" but the window is not (green button), leave the page's full screen
   // first, so the request puts the window back in full screen. If that second step is refused, the message stays up
   // and the next click asks again from a clean state.
   if (docFullscreen() && document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().then(go, go);
@@ -454,7 +468,7 @@ function fullscreenWait() {
       func: (done) => {
         const t0 = performance.now();
         showFsOverlay();
-        // v1.6: checked every 100 ms instead of waiting for a full-screen event, which the green button may not send
+        // Checked every 100 ms instead of waiting for a full-screen event, which the green button may not send
         const timer = setInterval(() => {
           if (!isFullscreen()) return;
           clearInterval(timer);
@@ -468,7 +482,7 @@ function fullscreenWait() {
 }
 
 // ------------------------------------------------------------------ data output
-const TRIAL_COLS = ["subject_id", "sona_id", "list", "trial_number", "phase", "trial_kind", "stim_id",
+const TRIAL_COLS = ["subject_id", "sona_id", "sample", "list", "trial_number", "phase", "trial_kind", "stim_id",
   "scene_label", "object_label", "congruency", "analyzed_stimulus", "scene_file", "target_file", "foil_file",
   "target_side", "left_file", "right_file", "left_text", "right_text", "correct_key", "response_key",
   "accuracy", "rt_ms", "timed_out",
@@ -479,7 +493,7 @@ const TRIAL_COLS = ["subject_id", "sona_id", "list", "trial_number", "phase", "t
   "response_screen_ms", "response_onset_ts",
   "early_presses", "rushed", "checkin_after",
   "frame_ms", "scene_px", "option_w_px", "option_h_px", "fullscreen_at_end", "hidden_during_trial", "time_elapsed"];
-const SESSION_COLS = ["subject_id", "sona_id", "version", "mode", "start_time", "end_time", "refresh_hz", "frame_ms",
+const SESSION_COLS = ["subject_id", "sona_id", "sample", "mode", "start_time", "end_time", "refresh_hz", "frame_ms",
   "frame_sd_ms", "vsync_rate_browsercheck", "scene_scale", "response_scale", "scene_px", "option_w_px", "option_h_px",
   "screen_width", "screen_height",
   "window_width", "window_height", "device_pixel_ratio", "browser", "browser_version", "os", "fullscreen_exits",
@@ -512,7 +526,7 @@ function outputs(jsPsych) {
 // ------------------------------------------------------------------ timeline
 function buildTimeline(jsPsych) {
   SESSION.subject_id = jsPsych.randomization.randomID(10);
-  jsPsych.data.addProperties({ subject_id: SESSION.subject_id, sona_id: SESSION.sona_id, version: CONFIG.version });
+  jsPsych.data.addProperties({ subject_id: SESSION.subject_id, sona_id: SESSION.sona_id, sample: SESSION.sample });
   const list = buildTrialList(jsPsych);
   const allImages = TASK_STIMULI.flatMap((m) => [m.scene, m.target, m.lure]).concat(CATCH_STIMULI.map((c) => c.scene))
     .concat([CONFIG.demo.scene_circled, CONFIG.demo.target, CONFIG.demo.lure]);
@@ -626,7 +640,7 @@ function buildTimeline(jsPsych) {
   }));
   tl.push({ type: jsPsychCallFunction, data: { phase: "task_start" }, func: () => { SESSION.task_started = true; LEAVE_WARNING = true; return {}; } });
 
-  // 10. Task: 89 main + 6 catch trials (S68, S73, S74; stimulus 72 removed, D27) and no breaks (S76)
+  // 10. Task: 89 main + 6 catch trials (S68, S73, S74; stimulus 46 removed as the demo) and no breaks (S76)
   list.forEach((item, i) => {
     tl.push(fullscreenWait()); tl.push(makeTrial(jsPsych, item, i));
     if (i < list.length - 1) tl.push(checkInNode(jsPsych));   // P8, P9 (D23, D24); none after the last trial
@@ -655,7 +669,7 @@ function buildTimeline(jsPsych) {
       if (MODE !== "live") { (window.__SIM_OUT = window.__SIM_OUT || []).push(out); done({ saved: "local" }); return; }
       const el = jsPsych.getDisplayElement();
       el.innerHTML = "<p>Saving your data. Please do not close this page.</p>";
-      const base = `exp1a_${CONFIG.version}_${SESSION.subject_id}`;
+      const base = fileBase();
       const files = [[`${base}_trials.csv`, out.trials_csv], [`${base}_session.csv`, out.session_csv], [`${base}_raw.json`, out.raw_json]];
       // plugin-pipe returns an Error object (it does not throw) when the request fails, and has no time
       // limit, so each attempt is checked and capped at 20 s. Retries use a new filename so a save that
@@ -780,8 +794,7 @@ async function runTimingCheck(nTrials, auto) {
 window.addEventListener("load", () => {
   if (MODE === "simulate") { runSimulations(parseInt(URLP.get("sessions") || "1", 10)); return; }
   if (MODE === "timingcheck") { runTimingCheck(parseInt(URLP.get("trials") || "20", 10), URLP.get("auto") === "1"); return; }
-  // jsPsych runs on <body>, so key presses reach it even after a button click has moved the focus
-  // (in v1.0 a separate display div missed them).
+  // jsPsych runs on <body>, so key presses reach it even after a button click has moved the focus.
   const jsPsych = initJsPsych({ on_finish: () => finishLive(jsPsych) });
   window.jsPsychInstance = jsPsych;   // lets the browser console (and the test scripts) read the data so far
   // Warn before leaving the page in the middle of the task; leaving loses the data.
