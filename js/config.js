@@ -25,7 +25,14 @@ const CONFIG = {
   scene_ms: 2500,                               // S58: "a scene display lasting 2,500 ms"
   fixation2_ms: 500,                            // S59: "After another fixation cross (500 ms)"
   response_limit_ms: 2500,                      // S63: Figure 2B "Max. 2,500ms"
-  // S60: no mask. S65: no feedback (not reported; D13). S66: no gap between trials beyond the fixation.
+  // S60: no mask. S65: no feedback (not reported; D13).
+  // S66: no gap between trials beyond the fixation, as in the original, when the person answers in time.
+  // When a trial ends with no answer within response_limit_ms, the task pauses on a short break screen
+  // ("Please respond within 2.5 seconds!" plus a reminder of the instructions) until the person presses the
+  // space bar (not in the original). No break screen after the last trial.
+  pause_after_timeout: true,                    // false puts back the original's back-to-back trials after a timeout too
+  pause_key: " ",                               // the space bar; F and J do nothing on the break screen
+  pause_min_ms: 300,                            // presses in the first 300 ms are ignored, so a late F or J press cannot be followed by a stray space
 
   // ---------------------------------------------------------------- response keys
   key_left: "f",                                // S62: "pressed "F" for left"
@@ -63,11 +70,12 @@ const CONFIG = {
     target: "stimuli/target/46.png",                  // the cutting board from the photo
     lure: "stimuli/lure/46.png",                      // the other cutting board (stimulus 46's own lure)
   },
-  breaks: 0,                                    // S76 not reported: none (D13)
+  breaks: 0,                                    // S76 not reported: none (D13). The break screen after a timeout (pause_after_timeout) is the only pause.
   catch_pass_rule: 6,                           // S15 not reported: all 6 correct (D11). Used in analysis, not in the task.
 
   // ---------------------------------------------------------------- check-in messages (P8 and P9; not in the original)
   // P8 (D23): after this many trials in a row with no F or J answer, pause and ask whether the person is still there.
+  // Not used while pause_after_timeout is true, because every missed trial already gets the break screen.
   checkin_after_misses: 5,
   // P9 (D24): a trial counts as "rushed" if F or J was pressed at least rush_early_presses times while the + or the
   // photo was on screen (before the two objects appeared), or if the answer came faster than rush_fast_rt_ms.

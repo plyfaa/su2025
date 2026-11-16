@@ -177,7 +177,11 @@ function makeTrial(jsPsych, item, index) {
     fixation_px: () => SIZES.fixation_px, fixation_line_px: () => SIZES.fixation_line_px, text_px: () => SIZES.text_px,
     background: CONFIG.background,                                                          // S27
     sim_p_correct: simPCorrect(item),
-    on_finish: (d) => updateCheckIn(d),
+    on_finish: (d) => {
+      updateCheckIn(d);
+      d.pause_before_ms = PAUSE.last_ms === null ? "" : PAUSE.last_ms;   // time on the pause screen just before this trial
+      PAUSE.last_ms = null;
+    },
     data: {
       phase: "task", trial_number: index + 1, stim_id: s.stim_id,
       scene_label: s.scene_label, object_label: isMain ? s.object_label : "",
@@ -230,10 +234,57 @@ function checkInNode(jsPsych) {
       },
     }],
     conditional_function: () => {
-      if (CHECKIN.misses >= CONFIG.checkin_after_misses) { CHECKIN.pending = "no_response"; return true; }
+      // With the break screen after every timeout, the "Are you still there?" check-in would repeat it, so it is skipped.
+      if (!CONFIG.pause_after_timeout && CHECKIN.misses >= CONFIG.checkin_after_misses) { CHECKIN.pending = "no_response"; return true; }
       if (CHECKIN.recent.reduce((a, b) => a + b, 0) >= CONFIG.rush_trials) { CHECKIN.pending = "rushed"; return true; }
       return false;
     },
+  };
+}
+
+// ------------------------------------------------------------------ break screen after a timeout (not in the original)
+// When a trial ends with no answer within CONFIG.response_limit_ms, the task shows a short break screen: "Please
+// respond within 2.5 seconds!", a reminder of the instructions, and "take as much time as you need". The next trial
+// starts with its fixation cross when the person presses the space bar. Trials answered in time go straight to the
+// next trial, as in the original. Only the space bar counts here; F and J do nothing. A press in the first
+// CONFIG.pause_min_ms, or a key held down from before, is ignored. The time spent on this screen is saved as
+// pause_before_ms on the trial that follows it (blank when there was no break).
+const PAUSE = { last_ms: null };
+function lastTaskTrial(jsPsych) { return jsPsych.data.get().filter({ phase: "task" }).last(1).values()[0] || {}; }
+function pauseHTML() {
+  const secs = CONFIG.response_limit_ms / 1000;
+  return pageHTML("Short break", `<h2>Please respond within ${secs} seconds!</h2>
+    <p>We did not get your answer in time on that trial. Here is a reminder of how each trial works:</p>
+    <ol><li>Look at the <b>+</b> in the middle of the screen.</li>
+      <li>A photo appears for ${CONFIG.scene_ms / 1000} seconds. You can look anywhere in the photo.</li>
+      <li>Two objects appear side by side. Press <b>F</b> if the object from the photo is on the left, or <b>J</b> if it is on the right.
+        (A few times, you will get a question about the room instead. Answer it with the same keys.)</li>
+      <li>Answer within ${secs} seconds after the two objects appear.</li></ol>
+    <p><mark style="background:#ffe45c;padding:2px 6px;border-radius:3px"><b>Take as much time as you need.</b></mark> When you are ready, put your fingers back on <b>F</b> and <b>J</b>, look at the middle of the screen, and press the <b>space bar</b> to continue.</p>`);
+}
+function pauseNode(jsPsych) {
+  return {
+    timeline: [{
+      type: jsPsychCallFunction, async: true, data: { phase: "pause" },
+      func: (done) => {
+        if (MODE !== "live") { PAUSE.last_ms = 0; done({ pause_ms: 0, simulated: true }); return; }
+        const el = jsPsych.getDisplayElement();
+        window.scrollTo(0, 0);
+        el.innerHTML = pauseHTML();
+        const t0 = performance.now();
+        const onKey = (e) => {
+          if (e.key !== CONFIG.pause_key || e.repeat || performance.now() - t0 < CONFIG.pause_min_ms) return;
+          e.preventDefault();
+          document.removeEventListener("keydown", onKey);
+          const ms = Math.round(performance.now() - t0);
+          PAUSE.last_ms = ms;
+          el.innerHTML = "";
+          done({ pause_ms: ms });
+        };
+        document.addEventListener("keydown", onKey);
+      },
+    }],
+    conditional_function: () => lastTaskTrial(jsPsych).timed_out === 1,
   };
 }
 
@@ -312,7 +363,9 @@ function instructionPages() {
       text: `<p>Press <b>F</b> if the object from the photo is on the <b>left</b>.</p>
              <p>Press <b>J</b> if it is on the <b>right</b>.</p>
              <p>In this example, the cutting board from the photo is on the left, so the answer is <b>F</b>.</p>
-             <p>Wait until the two objects appear before you press a key. Answer as quickly and accurately as you can. If you take too long, the study moves on to the next trial.</p>`,
+             <p>Wait until the two objects appear before you press a key. Answer as quickly and accurately as you can, within 2.5 seconds. ${CONFIG.pause_after_timeout
+               ? "If you take too long, the study pauses and shows you a reminder. Press the <b>space bar</b> when you are ready to go on."
+               : "If you take too long, the study moves on to the next trial."}</p>`,
       pic: `<div class="dm-answer"><span><img src="${D.target}" alt="The cutting board from the photo"><span class="sk-key">F</span></span>
             <span><img src="${D.lure}" alt="A different cutting board"><span class="sk-key">J</span></span></div>` },
     { title: "A few different questions",
@@ -491,7 +544,7 @@ const TRIAL_COLS = ["subject_id", "sona_id", "sample", "list", "trial_number", "
   "fixation2_intended_ms", "fixation2_intended_frames", "fixation2_frame_rounded_ms", "fixation2_measured_ms",
   "fixation1_dropped_frames", "scene_dropped_frames", "fixation2_dropped_frames", "brief_screens_within_one_frame",
   "response_screen_ms", "response_onset_ts",
-  "early_presses", "rushed", "checkin_after",
+  "early_presses", "rushed", "checkin_after", "pause_before_ms",
   "frame_ms", "scene_px", "option_w_px", "option_h_px", "fullscreen_at_end", "hidden_during_trial", "time_elapsed"];
 const SESSION_COLS = ["subject_id", "sona_id", "sample", "mode", "start_time", "end_time", "refresh_hz", "frame_ms",
   "frame_sd_ms", "vsync_rate_browsercheck", "scene_scale", "response_scale", "scene_px", "option_w_px", "option_h_px",
@@ -633,17 +686,23 @@ function buildTimeline(jsPsych) {
   tl.push(customScreen(jsPsych, "ready", (el, done) => {
     el.innerHTML = pageHTML("Well done!", `<h2>You are ready to begin</h2>
       <p>You answered all the questions correctly.</p>
-      <p>The task takes about 8 minutes, with no breaks.</p>
+      <p>The task takes about 8 minutes. The trials run one after another. ${CONFIG.pause_after_timeout
+        ? "If you miss one, the study pauses so you can take a short break." : "There are no breaks."}</p>
       <p>When you press <b>Start</b>, the first trial begins right away, so get ready: look at the middle of the screen and keep your fingers on <b>F</b> and <b>J</b>.</p>
       <div class="pg-nav"><button class="pg-btn" id="pg-start">Start</button></div>`);
     el.querySelector("#pg-start").onclick = () => done({});
   }));
   tl.push({ type: jsPsychCallFunction, data: { phase: "task_start" }, func: () => { SESSION.task_started = true; LEAVE_WARNING = true; return {}; } });
 
-  // 10. Task: 89 main + 6 catch trials (S68, S73, S74; stimulus 46 removed as the demo) and no breaks (S76)
+  // 10. Task: 89 main + 6 catch trials (S68, S73, S74; stimulus 46 removed as the demo) and no breaks (S76).
+  // Between trials: any check-in, then the break screen if the trial timed out (not in the original). Neither comes
+  // after the last trial.
   list.forEach((item, i) => {
     tl.push(fullscreenWait()); tl.push(makeTrial(jsPsych, item, i));
-    if (i < list.length - 1) tl.push(checkInNode(jsPsych));   // P8, P9 (D23, D24); none after the last trial
+    if (i < list.length - 1) {
+      tl.push(checkInNode(jsPsych));                                 // P8, P9 (D23, D24)
+      if (CONFIG.pause_after_timeout) tl.push(pauseNode(jsPsych));
+    }
   });
   tl.push({ type: jsPsychCallFunction, func: () => { SESSION.task_started = false; return {}; }, data: { phase: "task_end" } });
 
@@ -745,6 +804,7 @@ async function runSimulations(n) {
     const jsPsych = initJsPsych();
     SIM_OFFSET = jsPsych.randomization.sampleNormal(0, 0.42);
     Object.assign(CHECKIN, { misses: 0, recent: [], pending: null });
+    PAUSE.last_ms = null;
     Object.assign(QUIZ, { attempts: 0, passed: false });
     Object.assign(PRACTICE, { attempts: 0, passed: false, triesThisPass: 0, passedThisPass: false });
     Object.assign(SESSION, { fullscreen_exits: 0, n_checkins_no_response: 0, n_checkins_rushed: 0, quiz_attempts: 0,

@@ -4,6 +4,8 @@ Online replication of Su, Qiu & Ding (2025), Experiment 1a, built in jsPsych and
 
 For visually testing the paradigm: https://plyfaa.github.io/su2025/index.html?sona_id=INSTRUCTOR&sample=test
 
+Break screen after a missed trial are included as well (deviation from original)
+
 ## Links and the `sample` tag
 
 The `sample` part of the link goes into the saved file names and into a `sample` column. Test runs and pilots stay separate from SONA data.
