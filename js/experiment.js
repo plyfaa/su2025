@@ -363,7 +363,8 @@ function instructionPages() {
       text: `<p>Press <b>F</b> if the object from the photo is on the <b>left</b>.</p>
              <p>Press <b>J</b> if it is on the <b>right</b>.</p>
              <p>In this example, the cutting board from the photo is on the left, so the answer is <b>F</b>.</p>
-             <p>Wait until the two objects appear before you press a key. Answer as quickly and accurately as you can, within 2.5 seconds. ${CONFIG.pause_after_timeout
+             <p>Wait until the two objects appear before you press a key. Answer as quickly and accurately as you can, within 2.5 seconds.</p>
+             <p>${CONFIG.pause_after_timeout
                ? "If you take too long, the study pauses and shows you a reminder. Press the <b>space bar</b> when you are ready to go on."
                : "If you take too long, the study moves on to the next trial."}</p>`,
       pic: `<div class="dm-answer"><span><img src="${D.target}" alt="The cutting board from the photo"><span class="sk-key">F</span></span>
@@ -686,7 +687,7 @@ function buildTimeline(jsPsych) {
   tl.push(customScreen(jsPsych, "ready", (el, done) => {
     el.innerHTML = pageHTML("Well done!", `<h2>You are ready to begin</h2>
       <p>You answered all the questions correctly.</p>
-      <p>The task takes about 8 minutes. The trials run one after another. ${CONFIG.pause_after_timeout
+      <p>The task takes around 20 minutes. The trials run one after another. ${CONFIG.pause_after_timeout
         ? "If you miss one, the study pauses so you can take a short break." : "There are no breaks."}</p>
       <p>When you press <b>Start</b>, the first trial begins right away, so get ready: look at the middle of the screen and keep your fingers on <b>F</b> and <b>J</b>.</p>
       <div class="pg-nav"><button class="pg-btn" id="pg-start">Start</button></div>`);
