@@ -1,7 +1,9 @@
 
-
 # =============================================================================
 # Su, Qiu & Ding (2025), Experiment 1a: replication analysis 
+
+# Date modified: Tuesday, November 17, 2026 
+# Written by Plyfaa Suwanamalik-Murphy & assisted with Claude Opus 5.5 
 # =============================================================================
 
 
@@ -11,9 +13,9 @@
 
 # install.packages(c("dplyr", "ggplot2", "lme4"))
 
-library(dplyr)    # functions for picking rows and summarizing tables
-library(ggplot2)  # functions for making plots
-library(lme4)     # fits the statistical model that will be used 
+library(dplyr) # functions for picking rows and summarizing tables
+library(ggplot2) # functions for making plots
+library(lme4) # fits the statistical model that will be used 
 
 
 
@@ -25,8 +27,8 @@ data_folder <- "data" # the name of the folder holding the CSV files
 # <- means "store this in". Read it as "data_folder gets 'data'" 
 
 # list.files() lists the files inside a folder.
-# pattern = "_trials"  keeps only file names that contain "_trials"
-# full.names = TRUE    gives the folder too, like "data/su2025_exp1a_main_2026-11-12_abc_trials-anon.csv"
+# pattern = "_trials" keeps only file names that contain "_trials"
+# full.names = TRUE gives the folder too, like "data/su2025_exp1a_main_2026-11-12_abc_trials-anon.csv"
 # (fields: study_experiment_sample_date_subject; older files start with "exp1a_" instead)
 trial_files <- list.files(data_folder, pattern = "_trials", full.names = TRUE)
 
@@ -73,7 +75,6 @@ length(trial_files) # how many trial files were found (one per person, AND any r
 # -----------------------------------------------------------------------------
 # STEP 6. Make the linear component and the quadratic component
 # -----------------------------------------------------------------------------
-
 # The paper uses "a second-order polynomial expansion of scene-object congruency"
 
 
