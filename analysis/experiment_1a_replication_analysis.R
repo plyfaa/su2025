@@ -54,7 +54,7 @@ main %>% group_by(batch) %>% summarise(people = n_distinct(subject_id), trials =
 
 # Mean reaction time for first and second batch 
 rt <- tapply(main$rt_ms, main$batch, mean) / 1000 # in seconds  
-barplot(rt, ylab = "Mean reaction time (ms)")
+barplot(rt, ylab = "Mean reaction time (seconds)")
 
 
 # -----------------------------------------------------------------------------
