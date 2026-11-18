@@ -6,80 +6,63 @@
 # Written by Plyfaa Suwanamalik-Murphy & assisted with Claude Opus 5.5 
 # =============================================================================
 
-
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------- #
 # STEP 0. Load  packages
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------- #
 
-# install.packages(c("dplyr", "ggplot2", "lme4"))
+install.packages(c("dplyr", "ggplot2", "lme4"))
 
 library(dplyr) # functions for picking rows and summarizing tables
 library(ggplot2) # functions for making plots
 library(lme4) # fits the statistical model that will be used 
 
+# ------------- Read every trial file into one table ------------- #
 
+data_folder <- "~/Desktop/su2025/data/raw" # location of my CSV files are
+files <- list.files(data_folder, pattern = "_trials.csv", full.names = TRUE) # one file per session is saved 
 
-# -----------------------------------------------------------------------------
-# STEP 1. Read every participant's trial file into one table
-# -----------------------------------------------------------------------------
+read_one_file <- function(f) {
+  d <- read.csv(f) # load the file
+  d$batch <- ifelse("pause_before_ms" %in% names(d), "second", "first")  # only the new task (break screen after 2.5 s is missed) has this column
+  d$sona_id <- as.character(d$sona_id) # IDs as text so they can all be combined! 
+  d[, c("subject_id", "sona_id", "batch", "sample", "trial_number", "trial_kind", "stim_id", 
+        "congruency", "analyzed_stimulus", "timed_out", "accuracy", "rt_ms")]
+  }
 
-data_folder <- "data" # the name of the folder holding the CSV files
-# <- means "store this in". Read it as "data_folder gets 'data'" 
+trials <- bind_rows(lapply(files, read_one_file)) # read every file and combine them all into one table
 
-# list.files() lists the files inside a folder.
-# pattern = "_trials" keeps only file names that contain "_trials"
-# full.names = TRUE gives the folder too, like "data/su2025_exp1a_main_2026-11-12_abc_trials-anon.csv"
-# (fields: study_experiment_sample_date_subject; older files start with "exp1a_" instead)
-trial_files <- list.files(data_folder, pattern = "_trials", full.names = TRUE)
+# ------------- Keep only the participants who passed the catch trials ------------- #
 
-length(trial_files) # how many trial files were found (one per person, AND any retries)
+passed <- trials %>%
+  filter(trial_kind == "catch") %>% # catch trials only
+  group_by(subject_id) %>% # one row per person
+  summarise(n_right = sum(accuracy == 1, na.rm = TRUE)) %>% # count correct catch answers
+  filter(n_right == 6) # keep only perfect scores
 
-# A retried upload saves the same session twice ("..._trials_retry1.csv"), and the pattern above
-# picks up both. After bind_rows, keep one copy per subject_id with
-# distinct(subject_id, trial_number, .keep_all = TRUE).
-# Keep only real sessions: sample == "main". Pilot and test runs have their own sample tag.
+# ------------- Keep only the trials the analysis uses ------------- # 
 
+main <- trials %>%
+  filter(subject_id %in% passed$subject_id, # people who passed
+         trial_kind == "main", # no catch trials 
+         analyzed_stimulus == 1, # the 76 objects the paper analyzed
+         timed_out == 0) %>% # answered within the set 2.5 seconds
+  group_by(subject_id) %>%  # each person separately
+  filter(abs(rt_ms - mean(rt_ms)) <= 2 * sd(rt_ms)) %>% # drop RTs > 2 SD from their own mean
+  ungroup()
 
-
-# -----------------------------------------------------------------------------
-# STEP 2. Remove people who missed any catch trial
-# -----------------------------------------------------------------------------
-# Catch trials are a check in the paradigm to determine whether someone was paying attention. 
-# Each person has 6 catch trials. The original paper does not report its cutoff.
-# My version keeps only people with all 6 trials correct (perhaps this is too restrictive?)
-# Decision: all 6 correct. The writeup states the same rule.
-
-
-
-# -----------------------------------------------------------------------------
-# STEP 3. Keep only the trials the analysis uses
-# -----------------------------------------------------------------------------
-# Keep main trials with analyzed_stimulus == 1 only, which is 76 items.
-# (All 76 are shown because the demo is stimulus 46, which the original never analyzed.)
-# Timeouts (timed_out == 1, accuracy is NA) are excluded,
-# not counted as wrong. Remove them on purpose here and count them --> glmer drops NA rows.
-
+main %>% group_by(batch) %>% summarise(people = n_distinct(subject_id), trials = n()) # what data is left??
 
 # -----------------------------------------------------------------------------
-# STEP 4. Remove each person's fast or slow answers. Anything that appears strange... 
-# -----------------------------------------------------------------------------
-# Per participant: drop trials whose rt_ms is more than
-# 2 SD above or below that person's own mean, using the trials left after STEP 3.
-
-
-# -----------------------------------------------------------------------------
-# STEP 5. Look at the data visually and plot before testing anything. 
+# Look at the data visually and plot before testing anything. 
 # -----------------------------------------------------------------------------
 
 
-# -----------------------------------------------------------------------------
-# STEP 6. Make the linear component and the quadratic component
 # -----------------------------------------------------------------------------
 # The paper uses "a second-order polynomial expansion of scene-object congruency"
 
 
 # -----------------------------------------------------------------------------
-# STEP 8. Our main test!
+# Our main test!
 
 # A linear model versus a quadratic model...
 # -----------------------------------------------------------------------------
@@ -89,21 +72,13 @@ length(trial_files) # how many trial files were found (one per person, AND any r
 
 
 # -----------------------------------------------------------------------------
-# STEP 9. The numbers for each component
+# The numbers for each component
 # -----------------------------------------------------------------------------
 
 
 # -----------------------------------------------------------------------------
-# STEP 10. How much data went into the model
+# How much data went into the model
 # -----------------------------------------------------------------------------
-
-# participants (the paper had 69 participants)
-# trials
-
-
-
-
-
 
 
 
