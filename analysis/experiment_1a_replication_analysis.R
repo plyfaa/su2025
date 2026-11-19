@@ -101,6 +101,7 @@ ggplot(data = main,
                      group = stim_id)) +
   stat_summary(fun = "mean",
                geom = "point") +
+  geom_hline(yintercept = 50, linetype = "dashed") +
   labs(title = "Each dot is one object, averaged across participants",
        x = "Scene-object congruency",
        y = "Accuracy (% correct)") +
