@@ -53,9 +53,21 @@ main <- trials %>%
 main %>% group_by(batch) %>% summarise(people = n_distinct(subject_id), trials = n()) # what data is left??
 
 # Mean reaction time for first and second batch 
-rt <- tapply(main$rt_ms, main$batch, mean) / 1000 # in seconds  
-barplot(rt, ylab = "Mean reaction time (seconds)")
+rt <- summarise(group_by(main, batch), mean_rt = mean(rt_ms) / 1000) # mean RT in seconds
 
+# Attempt 1 
+ggplot(data = main,
+       mapping = aes(x = batch, y = rt_ms / 1000)) +
+  stat_summary(fun = "mean",
+               geom = "bar") +
+  labs(x = "Batch", y = "Mean reaction time (in seconds)") 
+
+# Attempt 2 
+ggplot(data = main,
+       mapping = aes(x = batch, y = rt_ms / 1000, fill = batch)) +
+  stat_summary(fun = "mean",geom = "bar") +
+  labs(x = "Batch", y = "Mean reaction time (in seconds)") +
+  theme_classic() + theme(legend.position = "none")
 
 # -----------------------------------------------------------------------------
 # Look at the data visually and plot before testing anything. 
