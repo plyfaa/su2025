@@ -66,7 +66,8 @@ ggplot(data = main,
        mapping = aes(x = batch, y = rt_ms / 1000)) +
   stat_summary(fun = "mean",
                geom = "bar") +
-  labs(x = "Batch", y = "Mean reaction time (in seconds)") 
+  labs(x = "Batch", y = "Mean reaction time (in seconds)") + 
+  theme_classic()
 
 # Aspect of data #1. Attempt 2. Lab 7
 # Mean reaction time in batch 1 and 2 
