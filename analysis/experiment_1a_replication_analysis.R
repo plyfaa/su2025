@@ -10,11 +10,14 @@
 # STEP 0. Load  packages
 # ----------------------------------------------------------------------------- #
 
-install.packages(c("dplyr", "ggplot2", "lme4"))
+# install.packages(c("dplyr", "ggplot2", "lme4"))
+# install.packages("assertthat")
 
 library(dplyr) # functions for picking rows and summarizing tables
 library(ggplot2) # functions for making plots
 library(lme4) # fits the statistical model that will be used 
+library(assertthat)
+
 
 # ------------- Read every trial file into one table ------------- #
 
@@ -55,24 +58,52 @@ main %>% group_by(batch) %>% summarise(people = n_distinct(subject_id), trials =
 # Mean reaction time for first and second batch 
 rt <- summarise(group_by(main, batch), mean_rt = mean(rt_ms) / 1000) # mean RT in seconds
 
-# Attempt 1 
+# -----------------------------------------------------------------
+
+# Aspect of data #1. Attempt 1. Lab 7
+# Mean reaction time in batch 1 and 2 
 ggplot(data = main,
        mapping = aes(x = batch, y = rt_ms / 1000)) +
   stat_summary(fun = "mean",
                geom = "bar") +
   labs(x = "Batch", y = "Mean reaction time (in seconds)") 
 
-# Attempt 2 
+# Aspect of data #1. Attempt 2. Lab 7
+# Mean reaction time in batch 1 and 2 
 ggplot(data = main,
        mapping = aes(x = batch, y = rt_ms / 1000, fill = batch)) +
   stat_summary(fun = "mean",geom = "bar") +
   labs(x = "Batch", y = "Mean reaction time (in seconds)") +
   theme_classic() + theme(legend.position = "none")
 
-# -----------------------------------------------------------------------------
-# Look at the data visually and plot before testing anything. 
-# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------
 
+# Aspect of data #2. Lab 7
+# Trials with no answer in batch 1 and 2 
+ggplot(data = trials,
+       mapping = aes(x = batch,
+                     y = timed_out * 100,
+                     fill = batch)) +
+  stat_summary(fun = "mean",
+               geom = "bar") +
+  labs(x = "Batch", y = "Trials with no answer (%)") +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# -----------------------------------------------------------------
+
+# A version of your “key” visualization for your project. Lab 7
+# Accuracy x concurrency
+ggplot(data = main,
+       mapping = aes(x = congruency,
+                     y = accuracy * 100,
+                     group = stim_id)) +
+  stat_summary(fun = "mean",
+               geom = "point") +
+  labs(title = "Each dot is one object, averaged across participants",
+       x = "Scene-object congruency",
+       y = "Accuracy (% correct)") +
+  theme_classic()
 
 # -----------------------------------------------------------------------------
 # The paper uses "a second-order polynomial expansion of scene-object congruency"
