@@ -95,14 +95,14 @@ ggplot(data = trials,
 
 # A version of your “key” visualization for your project. Lab 7
 # Accuracy x concurrency
-ggplot(data = main,
+ggplot(data = filter(main, batch == "second"),
        mapping = aes(x = congruency,
                      y = accuracy * 100,
                      group = stim_id)) +
   stat_summary(fun = "mean",
                geom = "point") +
   geom_hline(yintercept = 50, linetype = "dashed") +
-  labs(title = "Each dot is one object, averaged across participants",
+  labs(title = "Each dot is one object, averaged across participants. Second batch",
        x = "Scene-object congruency",
        y = "Accuracy (% correct)") +
   theme_classic()
