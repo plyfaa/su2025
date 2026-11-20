@@ -21,6 +21,8 @@ library(assertthat)
 
 # ------------- Read every trial file into one table ------------- #
 
+### this file path doesnt work for me. I think the here() library lets other people use data from the same directory
+
 data_folder <- "~/Desktop/su2025/data/raw" # location of my CSV files are
 files <- list.files(data_folder, pattern = "_trials.csv", full.names = TRUE) # one file per session is saved 
 
